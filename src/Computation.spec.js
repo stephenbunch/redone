@@ -149,6 +149,20 @@ it('should work with async computations', async () => {
   comp.dispose();
 });
 
+it('should not run again if a dependency is changed during the run', () => {
+  const dep = new Dependency();
+  let count = 0;
+  const comp = Computation.run(() => {
+    count += 1;
+    dep.depend();
+    dep.changed();
+  });
+  expect(count).toBe(1);
+  dep.changed();
+  expect(count).toBe(2);
+  comp.dispose();
+});
+
 describe('the compute function', () => {
   it('should return the function value', () => {
     let result;

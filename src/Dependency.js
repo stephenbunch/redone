@@ -15,7 +15,9 @@ export default class Dependency {
     const dependents = this.dependents;
     this.dependents = new Map();
     for (const [computation, ref] of dependents.entries()) {
-      if (Computation.current !== computation && computation.ref === ref) {
+      if (Computation.current === computation) {
+        this.dependents.set(computation, ref);
+      } else if (computation.ref === ref) {
         computation.run();
       }
     }
