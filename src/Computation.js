@@ -1,12 +1,13 @@
 let currentComputation = null;
 
-function getComputeFunction(computation) {
-  return function compute(func) {
+function getForkFunction(computation) {
+  return function fork(func) {
     if (computation.isAlive) {
-      const comp = new Computation(func, computation); // eslint-disable-line no-use-before-define
+      // eslint-disable-next-line no-use-before-define
+      const comp = new Computation(func, computation.ref);
       return comp.run();
     }
-    return func(compute, computation);
+    return func(computation);
   };
 }
 
@@ -15,20 +16,21 @@ export default class Computation {
     return currentComputation;
   }
 
-  static run(func) {
+  static start(func) {
     const comp = new Computation(func);
     comp.run();
     return comp;
   }
 
-  constructor(func, parent = null) {
+  constructor(func, parentRef = null) {
     if (typeof func !== 'function') {
       throw new Error('The function argument must be a function.');
     }
     this.func = func;
     this.ref = null;
-    this.parent = parent;
-    this.parentRef = parent && parent.ref;
+    this.parentRef = parentRef;
+    this.value = null;
+    this.fork = getForkFunction(this);
   }
 
   get isAlive() {
@@ -37,20 +39,24 @@ export default class Computation {
 
   dispose() {
     this.func = null;
+    this.ref.value = null;
     this.ref = null;
-    this.parent = null;
     this.parentRef = null;
   }
 
   run() {
     let result;
-    if (this.parent && this.parent.ref !== this.parentRef) {
+    if (this.parentRef && this.parentRef.value === null) {
       this.dispose();
     } else if (this.func) {
       const current = currentComputation;
       currentComputation = this;
-      this.ref = {};
-      result = this.func(getComputeFunction(this), this);
+      if (this.ref) {
+        this.ref.value = null;
+      }
+      this.ref = { value: this };
+      result = this.func(this);
+      this.value = result;
       currentComputation = current;
     }
     return result;

@@ -18,7 +18,7 @@ function mockPromise() {
 it('should run again when the dependency changes', () => {
   const dep = new Dependency();
   let count = 0;
-  const comp = Computation.run(() => {
+  const comp = Computation.start(() => {
     dep.depend();
     count += 1;
   });
@@ -32,7 +32,7 @@ it('should disconnect from previous dependencies on each new run', () => {
   const dep1 = new Dependency();
   const dep2 = new Dependency();
   let count = 0;
-  const comp = Computation.run(() => {
+  const comp = Computation.start(() => {
     if (count === 0) {
       dep1.depend();
     } else {
@@ -56,11 +56,11 @@ it('should support nested computations', () => {
   let countA = 0;
   let countB = 0;
   let countC = 0;
-  const comp = Computation.run(compute => {
+  const comp = Computation.start(comp => {
     dep1.depend();
-    compute(compute => {
+    comp.fork(comp => {
       dep2.depend();
-      compute(() => {
+      comp.fork(() => {
         dep3.depend();
         countC += 1;
       });
@@ -90,7 +90,7 @@ it('should support nested computations', () => {
 it('should not run when disposed', () => {
   const dep1 = new Dependency();
   let count = 0;
-  const comp = Computation.run(() => {
+  const comp = Computation.start(() => {
     dep1.depend();
     count += 1;
   });
@@ -102,16 +102,16 @@ it('should not run when disposed', () => {
 
 it('should throw an error if the function argument is not a function', () => {
   expect(() => {
-    Computation.run();
+    Computation.start();
   }).toThrow();
 });
 
 it('should not create a nested computation if the parent computation has been disposed', () => {
   const dep = new Dependency();
   let count = 0;
-  Computation.run((compute, comp) => {
+  Computation.start(comp => {
     comp.dispose();
-    compute(() => {
+    comp.fork(() => {
       dep.depend();
       count += 1;
     });
@@ -127,10 +127,10 @@ it('should work with async computations', async () => {
   let countB = 0;
   let promiseA = mockPromise();
   let promiseB = mockPromise();
-  const comp = Computation.run(async compute => {
+  const comp = Computation.start(async comp => {
     dep1.depend();
     await new Promise(resolve => setImmediate(resolve));
-    await compute(async () => {
+    await comp.fork(async () => {
       dep2.depend();
       await new Promise(resolve => setImmediate(resolve));
       countB += 1;
@@ -152,7 +152,7 @@ it('should work with async computations', async () => {
 it('should not run again if a dependency is changed during the run', () => {
   const dep = new Dependency();
   let count = 0;
-  const comp = Computation.run(() => {
+  const comp = Computation.start(() => {
     count += 1;
     dep.depend();
     dep.changed();
@@ -163,11 +163,11 @@ it('should not run again if a dependency is changed during the run', () => {
   comp.dispose();
 });
 
-describe('the compute function', () => {
+describe('the fork function', () => {
   it('should return the function value', () => {
     let result;
-    const comp = Computation.run(compute => {
-      result = compute(() => 2);
+    const comp = Computation.start(comp => {
+      result = comp.fork(() => 2);
     });
     expect(result).toBe(2);
     comp.dispose();
