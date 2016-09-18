@@ -3,6 +3,10 @@
   "extends": "airbnb",
   "rules": {
     "arrow-parens": "off",
+    "class-methods-use-this": "off",
+    "no-confusing-arrow": "off",
+    "no-param-reassign": "off",
     "no-shadow": "off",
+    "no-underscore-dangle": "off",
   },
 }
