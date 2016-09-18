@@ -19,6 +19,14 @@ export function listOf(type) {
   return new schemas.ArraySchema(parser.parse(type));
 }
 
+export function optionalOf(type) {
+  return new schemas.OptionalSchema(parser.parse(type));
+}
+
+export function nullableOf(type) {
+  return new schemas.NullableSchema(parser.parse(type));
+}
+
 export function reactiveShape(spec) {
   return (function transform(node) {
     if (node instanceof schemas.ShapeSchema) {
