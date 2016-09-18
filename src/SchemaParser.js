@@ -1,6 +1,6 @@
-import AnySchema from './AnySchema';
-import ArraySchema from './ArraySchema';
-import ShapeSchema from './ShapeSchema';
+import AnySchema from './schemas/AnySchema';
+import ArraySchema from './schemas/ArraySchema';
+import ShapeSchema from './schemas/ShapeSchema';
 
 const defaultList = schema => new ArraySchema(schema);
 const defaultShape = keys => new ShapeSchema(keys);

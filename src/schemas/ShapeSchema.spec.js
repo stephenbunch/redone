@@ -23,3 +23,22 @@ it('should cast undefined to an empty shape', () => {
     bar: '',
   });
 });
+
+it('should be transformable', () => {
+  const a = new ShapeSchema({
+    foo: number,
+    bar: string,
+  });
+  const b = a.transform(node => {
+    if (node instanceof NumberSchema) {
+      return string;
+    } else if (node instanceof StringSchema) {
+      return number;
+    }
+    return node;
+  });
+  expect(b.cast()).toEqual({
+    foo: '',
+    bar: 0,
+  });
+});

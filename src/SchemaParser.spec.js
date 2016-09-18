@@ -1,8 +1,8 @@
 /* global it expect */
 
 import SchemaParser from './SchemaParser';
-import StringSchema from './StringSchema';
-import NumberSchema from './NumberSchema';
+import StringSchema from './schemas/StringSchema';
+import NumberSchema from './schemas/NumberSchema';
 
 const parser = new SchemaParser();
 const string = new StringSchema();
