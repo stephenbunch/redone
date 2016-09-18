@@ -19,6 +19,6 @@ export default class ArraySchema extends AnySchema {
       item = item.transform(transform);
     }
     item = transform(item);
-    return new ArraySchema(item);
+    return new this.constructor(item);
   }
 }

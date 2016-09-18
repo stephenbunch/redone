@@ -29,6 +29,6 @@ export default class ShapeSchema extends AnySchema {
         keys[key] = transform(this.keys[key]);
       }
     }
-    return new ShapeSchema(keys);
+    return new this.constructor(keys);
   }
 }
