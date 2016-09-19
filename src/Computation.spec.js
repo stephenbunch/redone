@@ -174,15 +174,16 @@ describe('the fork function', () => {
   });
 });
 
-describe('the task function', () => {
+describe('the continue function', () => {
   it('should continue inside the computation', async () => {
     const dep1 = new Dependency();
     const dep2 = new Dependency();
     let called = 0;
 
-    const comp = Computation.start(async comp => {
+    const comp = Computation.start(async (comp, cont) => {
       dep1.depend();
-      await comp.task(Promise.resolve()).then(() => {
+      await Promise.resolve();
+      cont(() => {
         dep2.depend();
         called += 1;
       });
@@ -202,5 +203,33 @@ describe('the task function', () => {
     expect(called).toBe(3);
 
     comp.dispose();
+  });
+
+  it('should not run if the computation has been rerun', async () => {
+    const dep = new Dependency();
+    let called = 0;
+    let nextCalled = 0;
+
+    const comp = Computation.start(async (comp, cont) => {
+      dep.depend();
+      called += 1;
+      await Promise.resolve();
+      cont(() => {
+        nextCalled += 1;
+      });
+    });
+    expect(called).toBe(1);
+    expect(nextCalled).toBe(0);
+
+    await comp.value;
+    expect(nextCalled).toBe(1);
+
+    dep.changed();
+    dep.changed();
+    expect(called).toBe(3);
+    expect(nextCalled).toBe(1);
+
+    await comp.value;
+    expect(nextCalled).toBe(2);
   });
 });

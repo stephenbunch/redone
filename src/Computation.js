@@ -1,5 +1,17 @@
 let currentComputation = null;
 
+function getContinueFunction(computation) {
+  const ref = computation.ref;
+  return func => {
+    if (ref === computation.ref) {
+      const current = currentComputation;
+      currentComputation = computation;
+      func();
+      currentComputation = current;
+    }
+  };
+}
+
 export default class Computation {
   static get current() {
     return currentComputation;
@@ -37,26 +49,7 @@ export default class Computation {
       const comp = new Computation(func, this.ref);
       return comp.run();
     }
-    return func(this);
-  }
-
-  task(promise) {
-    const ref = this.ref;
-    const wrap = func => res => {
-      if (ref === this.ref) {
-        const current = Computation.current;
-        currentComputation = this;
-        func(res);
-        currentComputation = current;
-      }
-    };
-    return {
-      then: (success, rejected) => promise.then(
-        success ? wrap(success) : undefined,
-        rejected ? wrap(rejected) : undefined
-      ),
-      catch: rejected => promise.catch(wrap(rejected)),
-    };
+    return func(this, getContinueFunction(this));
   }
 
   run() {
@@ -70,7 +63,7 @@ export default class Computation {
         this.ref.value = null;
       }
       this.ref = { value: this };
-      result = this.func(this);
+      result = this.func(this, getContinueFunction(this));
       this.value = result;
       currentComputation = current;
     }
