@@ -7,6 +7,7 @@ module.exports = {
   output: {
     path: `${__dirname}/dist`,
     filename: 'redone.js',
+    library: 'redone',
   },
   devtool: 'source-map',
   plugins: [
