@@ -40,6 +40,25 @@ export default class Computation {
     return func(this);
   }
 
+  task(promise) {
+    const ref = this.ref;
+    const wrap = func => res => {
+      if (ref === this.ref) {
+        const current = Computation.current;
+        currentComputation = this;
+        func(res);
+        currentComputation = current;
+      }
+    };
+    return {
+      then: (success, rejected) => promise.then(
+        success ? wrap(success) : undefined,
+        rejected ? wrap(rejected) : undefined
+      ),
+      catch: rejected => promise.catch(wrap(rejected)),
+    };
+  }
+
   run() {
     let result;
     if (this.parentRef && this.parentRef.value === null) {

@@ -173,3 +173,34 @@ describe('the fork function', () => {
     comp.dispose();
   });
 });
+
+describe('the task function', () => {
+  it('should continue inside the computation', async () => {
+    const dep1 = new Dependency();
+    const dep2 = new Dependency();
+    let called = 0;
+
+    const comp = Computation.start(async comp => {
+      dep1.depend();
+      await comp.task(Promise.resolve()).then(() => {
+        dep2.depend();
+        called += 1;
+      });
+    });
+
+    expect(comp.value instanceof Promise).toBe(true);
+
+    await comp.value;
+    expect(called).toBe(1);
+
+    dep1.changed();
+    await comp.value;
+    expect(called).toBe(2);
+
+    dep2.changed();
+    await comp.value;
+    expect(called).toBe(3);
+
+    comp.dispose();
+  });
+});
