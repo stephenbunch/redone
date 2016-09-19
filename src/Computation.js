@@ -1,16 +1,5 @@
 let currentComputation = null;
 
-function getForkFunction(computation) {
-  return function fork(func) {
-    if (computation.isAlive) {
-      // eslint-disable-next-line no-use-before-define
-      const comp = new Computation(func, computation.ref);
-      return comp.run();
-    }
-    return func(computation);
-  };
-}
-
 export default class Computation {
   static get current() {
     return currentComputation;
@@ -30,7 +19,6 @@ export default class Computation {
     this.ref = null;
     this.parentRef = parentRef;
     this.value = null;
-    this.fork = getForkFunction(this);
   }
 
   get isAlive() {
@@ -42,6 +30,14 @@ export default class Computation {
     this.ref.value = null;
     this.ref = null;
     this.parentRef = null;
+  }
+
+  fork(func) {
+    if (this.isAlive) {
+      const comp = new Computation(func, this.ref);
+      return comp.run();
+    }
+    return func(this);
   }
 
   run() {
