@@ -2,16 +2,20 @@
   "name": "redone",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "build": "babel src --out-dir lib",
+    "webpack": "webpack",
     "test": "jest",
     "coverage": "jest --coverage"
   },
   "author": "Stephen Bunch",
   "license": "MIT",
   "devDependencies": {
+    "babel-cli": "^6.14.0",
     "babel-eslint": "^6.1.2",
     "babel-jest": "^15.0.0",
+    "babel-loader": "^6.2.5",
     "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-0": "^6.5.0",
@@ -20,6 +24,7 @@
     "eslint-plugin-import": "^1.14.0",
     "eslint-plugin-jsx-a11y": "^2.2.1",
     "eslint-plugin-react": "^6.2.0",
-    "jest": "^15.1.1"
+    "jest": "^15.1.1",
+    "webpack": "^1.13.2"
   }
 }
