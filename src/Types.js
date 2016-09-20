@@ -34,7 +34,7 @@ export function reactiveShape(spec) {
       for (const key of Object.keys(node.keys)) {
         keys[key] = transform(node.keys[key]);
       }
-      return new schemas.ReactiveShape(keys);
+      return new schemas.ReactiveShapeSchema(keys);
     } else if (typeof node.transform === 'function') {
       return node.transform(transform);
     }
