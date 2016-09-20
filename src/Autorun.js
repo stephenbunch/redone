@@ -40,7 +40,7 @@ export default class Autorun {
       if (this.parentComputation && !this.parentComputation.isAlive) {
         this.dispose();
       } else {
-        result = this.block(() => {
+        result = this.exec(() => {
           const isFirstRun = this.computation === null;
           if (this.computation) {
             this.computation.dispose();
@@ -54,7 +54,7 @@ export default class Autorun {
     return result;
   }
 
-  block(func) {
+  exec(func) {
     const current = currentAutorun;
     currentAutorun = this;
     const result = func();

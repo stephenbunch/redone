@@ -12,7 +12,7 @@ export default class Computation {
 
   continue(func) {
     if (this.autorun) {
-      return this.autorun.block(func);
+      return this.autorun.exec(func);
     }
     return undefined;
   }
