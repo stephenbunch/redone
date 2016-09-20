@@ -1,6 +1,6 @@
 /* global it expect describe */
 
-import Computation from './Computation';
+import Autorun from './Autorun';
 import Dependency from './Dependency';
 
 function mockPromise() {
@@ -18,21 +18,21 @@ function mockPromise() {
 it('should run again when the dependency changes', () => {
   const dep = new Dependency();
   let count = 0;
-  const comp = Computation.start(() => {
+  const autorun = Autorun.start(() => {
     dep.depend();
     count += 1;
   });
   dep.changed();
   dep.changed();
   expect(count).toBe(3);
-  comp.dispose();
+  autorun.dispose();
 });
 
 it('should disconnect from previous dependencies on each new run', () => {
   const dep1 = new Dependency();
   const dep2 = new Dependency();
   let count = 0;
-  const comp = Computation.start(() => {
+  const autorun = Autorun.start(() => {
     if (count === 0) {
       dep1.depend();
     } else {
@@ -46,7 +46,7 @@ it('should disconnect from previous dependencies on each new run', () => {
   expect(count).toBe(2);
   dep2.changed();
   expect(count).toBe(3);
-  comp.dispose();
+  autorun.dispose();
 });
 
 it('should support nested computations', () => {
@@ -56,7 +56,7 @@ it('should support nested computations', () => {
   let countA = 0;
   let countB = 0;
   let countC = 0;
-  const comp = Computation.start(comp => {
+  const autorun = Autorun.start(comp => {
     dep1.depend();
     comp.fork(comp => {
       dep2.depend();
@@ -84,40 +84,26 @@ it('should support nested computations', () => {
   expect(countA).toBe(3);
   expect(countB).toBe(4);
   expect(countC).toBe(5);
-  comp.dispose();
+  autorun.dispose();
 });
 
 it('should not run when disposed', () => {
   const dep1 = new Dependency();
   let count = 0;
-  const comp = Computation.start(() => {
+  const autorun = Autorun.start(() => {
     dep1.depend();
     count += 1;
   });
   dep1.changed();
-  comp.dispose();
+  autorun.dispose();
   dep1.changed();
   expect(count).toBe(2);
 });
 
 it('should throw an error if the function argument is not a function', () => {
   expect(() => {
-    Computation.start();
+    Autorun.start();
   }).toThrow();
-});
-
-it('should not create a nested computation if the parent computation has been disposed', () => {
-  const dep = new Dependency();
-  let count = 0;
-  Computation.start(comp => {
-    comp.dispose();
-    comp.fork(() => {
-      dep.depend();
-      count += 1;
-    });
-  });
-  dep.changed();
-  expect(count).toBe(1);
 });
 
 it('should work with async computations', async () => {
@@ -127,7 +113,7 @@ it('should work with async computations', async () => {
   let countB = 0;
   let promiseA = mockPromise();
   let promiseB = mockPromise();
-  const comp = Computation.start(async comp => {
+  const autorun = Autorun.start(async comp => {
     dep1.depend();
     await new Promise(resolve => setImmediate(resolve));
     await comp.fork(async () => {
@@ -146,13 +132,13 @@ it('should work with async computations', async () => {
   expect(await promiseB).toBe(2);
   dep1.changed();
   expect(await Promise.all([promiseA, promiseB])).toEqual([2, 3]);
-  comp.dispose();
+  autorun.dispose();
 });
 
 it('should not run again if a dependency is changed during the run', () => {
   const dep = new Dependency();
   let count = 0;
-  const comp = Computation.start(() => {
+  const autorun = Autorun.start(() => {
     count += 1;
     dep.depend();
     dep.changed();
@@ -160,17 +146,31 @@ it('should not run again if a dependency is changed during the run', () => {
   expect(count).toBe(1);
   dep.changed();
   expect(count).toBe(2);
-  comp.dispose();
+  autorun.dispose();
 });
 
 describe('the fork function', () => {
-  it('should return the function value', () => {
+  it('should not run if the parent has been disposed', () => {
+    const dep = new Dependency();
+    let count = 0;
+    const autorun = Autorun.start(comp => {
+      comp.fork(() => {
+        dep.depend();
+        count += 1;
+      });
+    });
+    autorun.dispose();
+    dep.changed();
+    expect(count).toBe(1);
+  });
+
+  it('should forward the return value', () => {
     let result;
-    const comp = Computation.start(comp => {
+    const autorun = Autorun.start(comp => {
       result = comp.fork(() => 2);
     });
     expect(result).toBe(2);
-    comp.dispose();
+    autorun.dispose();
   });
 });
 
@@ -180,29 +180,29 @@ describe('the continue function', () => {
     const dep2 = new Dependency();
     let called = 0;
 
-    const comp = Computation.start(async (comp, cont) => {
+    const autorun = Autorun.start(async comp => {
       dep1.depend();
       await Promise.resolve();
-      cont(() => {
+      comp.continue(() => {
         dep2.depend();
         called += 1;
       });
     });
 
-    expect(comp.value instanceof Promise).toBe(true);
+    expect(autorun.value instanceof Promise).toBe(true);
 
-    await comp.value;
+    await autorun.value;
     expect(called).toBe(1);
 
     dep1.changed();
-    await comp.value;
+    await autorun.value;
     expect(called).toBe(2);
 
     dep2.changed();
-    await comp.value;
+    await autorun.value;
     expect(called).toBe(3);
 
-    comp.dispose();
+    autorun.dispose();
   });
 
   it('should not run if the computation has been rerun', async () => {
@@ -210,18 +210,18 @@ describe('the continue function', () => {
     let called = 0;
     let nextCalled = 0;
 
-    const comp = Computation.start(async (comp, cont) => {
+    const autorun = Autorun.start(async comp => {
       dep.depend();
       called += 1;
       await Promise.resolve();
-      cont(() => {
+      comp.continue(() => {
         nextCalled += 1;
       });
     });
     expect(called).toBe(1);
     expect(nextCalled).toBe(0);
 
-    await comp.value;
+    await autorun.value;
     expect(nextCalled).toBe(1);
 
     dep.changed();
@@ -229,7 +229,16 @@ describe('the continue function', () => {
     expect(called).toBe(3);
     expect(nextCalled).toBe(1);
 
-    await comp.value;
+    await autorun.value;
     expect(nextCalled).toBe(2);
+  });
+
+  it('should forward the return value', () => {
+    let result;
+    const autorun = Autorun.start(comp => {
+      result = comp.continue(() => 2);
+    });
+    autorun.dispose();
+    expect(result).toBe(2);
   });
 });

@@ -1,72 +1,31 @@
-let currentComputation = null;
-
-function getContinueFunction(computation) {
-  const ref = computation.ref;
-  return func => {
-    if (ref === computation.ref) {
-      const current = currentComputation;
-      currentComputation = computation;
-      func();
-      currentComputation = current;
-    }
-  };
-}
+import Autorun from './Autorun';
 
 export default class Computation {
-  static get current() {
-    return currentComputation;
-  }
-
-  static start(func) {
-    const comp = new Computation(func);
-    comp.run();
-    return comp;
-  }
-
-  constructor(func, parentRef = null) {
-    if (typeof func !== 'function') {
-      throw new Error('The function argument must be a function.');
-    }
-    this.func = func;
-    this.ref = null;
-    this.parentRef = parentRef;
-    this.value = null;
+  constructor(autorun, isFirstRun) {
+    this.autorun = autorun;
+    this.isFirstRun = isFirstRun;
   }
 
   get isAlive() {
-    return this.func !== null;
+    return this.autorun !== null;
   }
 
-  dispose() {
-    this.func = null;
-    this.ref.value = null;
-    this.ref = null;
-    this.parentRef = null;
+  continue(func) {
+    if (this.autorun) {
+      return this.autorun.block(func);
+    }
+    return undefined;
   }
 
   fork(func) {
-    if (this.isAlive) {
-      const comp = new Computation(func, this.ref);
-      return comp.run();
+    if (this.autorun) {
+      const autorun = new Autorun(func, this);
+      return autorun.rerun();
     }
-    return func(this, getContinueFunction(this));
+    return undefined;
   }
 
-  run() {
-    let result;
-    if (this.parentRef && this.parentRef.value === null) {
-      this.dispose();
-    } else if (this.func) {
-      const current = currentComputation;
-      currentComputation = this;
-      if (this.ref) {
-        this.ref.value = null;
-      }
-      this.ref = { value: this };
-      result = this.func(this, getContinueFunction(this));
-      this.value = result;
-      currentComputation = current;
-    }
-    return result;
+  dispose() {
+    this.autorun = null;
   }
 }

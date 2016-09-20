@@ -1,4 +1,4 @@
-import Computation from './Computation';
+import Autorun from './Autorun';
 
 export default class Dependency {
   constructor() {
@@ -6,9 +6,9 @@ export default class Dependency {
   }
 
   depend() {
-    if (Computation.current && Computation.current.isAlive) {
-      if (this.dependents.indexOf(Computation.current.ref) === -1) {
-        this.dependents.push(Computation.current.ref);
+    if (Autorun.current && Autorun.current.isAlive) {
+      if (this.dependents.indexOf(Autorun.current.computation) === -1) {
+        this.dependents.push(Autorun.current.computation);
       }
     }
   }
@@ -17,12 +17,12 @@ export default class Dependency {
     const deps = this.dependents;
     const addBack = [];
     this.dependents = [];
-    for (const computationRef of deps) {
-      if (computationRef.value !== null) {
-        if (Computation.current === computationRef.value) {
-          addBack.push(computationRef);
+    for (const computation of deps) {
+      if (computation.isAlive) {
+        if (Autorun.current === computation.autorun) {
+          addBack.push(computation);
         } else {
-          computationRef.value.run();
+          computation.autorun.rerun();
         }
       }
     }

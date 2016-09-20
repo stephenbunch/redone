@@ -1,4 +1,4 @@
-import Computation from '../Computation';
+import Autorun from '../Autorun';
 import KeyedDependency from '../KeyedDependency';
 import ShapeSchema from './ShapeSchema';
 
@@ -16,8 +16,8 @@ function createClass(keys) {
         value: new Map(),
       });
       Object.keys(keys).forEach(key => {
-        if (Computation.current) {
-          Computation.current.fork(() => {
+        if (Autorun.current) {
+          Autorun.current.computation.fork(() => {
             this[key] = source[key];
           });
         } else {

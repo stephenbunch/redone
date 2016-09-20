@@ -3,7 +3,7 @@
 import ShapeSchema from './ShapeSchema';
 import ReactiveShapeSchema from './ReactiveShapeSchema';
 import NumberSchema from './NumberSchema';
-import Computation from '../Computation';
+import Autorun from '../Autorun';
 
 const number = new NumberSchema();
 
@@ -48,11 +48,11 @@ it('should setup dependencies', () => {
   });
   const obj = shape.cast();
   let result;
-  const comp = Computation.start(() => {
+  const autorun = Autorun.start(() => {
     result = obj.foo;
   });
   expect(result).toBe(0);
   obj.foo = 3;
   expect(result).toBe(3);
-  comp.dispose();
+  autorun.dispose();
 });
