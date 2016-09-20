@@ -1,6 +1,6 @@
 export * as schemas from './schemas';
 
-export Computation from './Computation';
+export Autorun from './Autorun';
 export Dependency from './Dependency';
 export KeyedDependency from './KeyedDependency';
 export SchemaParser from './SchemaParser';
