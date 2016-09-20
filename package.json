@@ -4,6 +4,7 @@
   "description": "Predictable computations for JavaScript apps.",
   "main": "lib/index.js",
   "scripts": {
+    "prepublish": "npm run build && npm run webpack",
     "build": "babel src --out-dir lib",
     "webpack": "webpack",
     "test": "jest",
