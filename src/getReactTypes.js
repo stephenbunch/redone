@@ -33,10 +33,10 @@ function transform(node) {
   return React.PropTypes.any;
 }
 
-export default function propTypesFromSpec(spec) {
+export default function getReactTypes(spec) {
   const schema = shape(spec);
   const keys = {};
-  for (const key of Object.keys(schema)) {
+  for (const key of Object.keys(schema.keys)) {
     keys[key] = transform(schema.keys[key]);
   }
   return keys;
