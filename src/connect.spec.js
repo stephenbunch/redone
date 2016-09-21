@@ -7,11 +7,12 @@ import { mount } from 'enzyme';
 import { number, func } from './Types';
 import connect from './connect';
 
-it('props should be a reactive shape', () => {
+it('props should be read-only', () => {
   const ctor = jest.fn(function ctor() {
     expect(this.props.foo).toBe(2);
-    this.props.foo = '3';
-    expect(this.props.foo).toBe(3);
+    expect(() => {
+      this.props.foo = '3';
+    }).toThrow();
   });
   const Foo = connect(class {
     static propTypes = {
@@ -316,5 +317,29 @@ it('should pass context variables', () => {
   wrapper.find('button').simulate('click');
   expect(wrapper.find('.value').text()).toBe('2|9');
 
+  wrapper.unmount();
+});
+
+it('context should be read-only', () => {
+  let called = false;
+  const Foo = connect(class {
+    static contextTypes = {
+      foo: number,
+    };
+
+    constructor(props, context) {
+      expect(context.foo).toBe(2);
+      expect(() => {
+        context.foo = 3;
+      });
+      called = true;
+    }
+  });
+  const wrapper = mount(<Foo />, {
+    context: {
+      foo: 2,
+    },
+  });
+  expect(called).toBe(true);
   wrapper.unmount();
 });

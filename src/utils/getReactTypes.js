@@ -1,5 +1,5 @@
 import React from 'react';
-import { shape } from './Types';
+import { shape } from '../Types';
 import {
   ArraySchema,
   BooleanSchema,
@@ -8,7 +8,7 @@ import {
   ObjectSchema,
   ShapeSchema,
   StringSchema,
-} from './schemas';
+} from '../schemas';
 
 function transform(node) {
   if (node instanceof ArraySchema) {

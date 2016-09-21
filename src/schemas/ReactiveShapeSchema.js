@@ -1,6 +1,8 @@
 import Autorun from '../Autorun';
 import KeyedDependency from '../KeyedDependency';
 import ShapeSchema from './ShapeSchema';
+import toObject from '../utils/toObject';
+import toJson from '../utils/toJson';
 
 function createClass(keys) {
   class ReactiveShape {
@@ -27,44 +29,12 @@ function createClass(keys) {
       this.__INITIALIZED = true;
     }
 
-    get __TYPE() {
-      return this.constructor;
-    }
-
     toObject() {
-      const retval = {};
-      for (const key of Object.keys(keys)) {
-        let value = this[key];
-        if (
-          typeof value === 'object' &&
-          value !== null &&
-          typeof value.toObject === 'function'
-        ) {
-          value = value.toObject();
-        }
-        if (value !== undefined) {
-          retval[key] = value;
-        }
-      }
-      return retval;
+      return toObject(this, keys);
     }
 
     toJSON() {
-      const retval = {};
-      for (const key of Object.keys(keys)) {
-        let value = this[key];
-        if (typeof value === 'object' && value !== null) {
-          if (typeof value.toJSON === 'function') {
-            value = value.toJSON();
-          } else if (typeof value.toObject === 'function') {
-            value = value.toObject();
-          }
-        }
-        if (value !== undefined) {
-          retval[key] = value;
-        }
-      }
-      return retval;
+      return toJson(this, keys);
     }
   }
 

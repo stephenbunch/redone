@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run build && npm run webpack",
-    "build": "babel src --out-dir lib",
+    "build": "rm -rf lib/ && babel src --out-dir lib",
     "webpack": "webpack",
     "test": "jest",
     "coverage": "jest --coverage"
@@ -46,6 +46,7 @@
       "jsx",
       "json"
     ],
+    "testPathDirs": ["<rootDir>/src/"],
     "testRegex": "\\.spec\\.jsx?$"
   }
 }

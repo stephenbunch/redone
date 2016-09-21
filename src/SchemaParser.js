@@ -1,6 +1,4 @@
-import AnySchema from './schemas/AnySchema';
-import ArraySchema from './schemas/ArraySchema';
-import ShapeSchema from './schemas/ShapeSchema';
+import { AnySchema, ArraySchema, ShapeSchema } from './schemas';
 
 const defaultList = schema => new ArraySchema(schema);
 const defaultShape = keys => new ShapeSchema(keys);
@@ -33,5 +31,15 @@ export default class SchemaParser {
       return this.shape(keys);
     }
     throw new Error(`Could not parse schema value '${JSON.stringify(value)}'.`);
+  }
+
+  parseShape(spec) {
+    if (
+      !(spec instanceof ShapeSchema) &&
+      (typeof spec !== 'object' || spec === null)
+    ) {
+      throw new Error('Spec must be an object.');
+    }
+    return this.parse(spec);
   }
 }

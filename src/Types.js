@@ -1,5 +1,6 @@
 import * as schemas from './schemas';
 import SchemaParser from './SchemaParser';
+import transformReplaceShape from './utils/transformReplaceShape';
 
 const parser = new SchemaParser();
 
@@ -12,7 +13,7 @@ export const object = new schemas.ObjectSchema();
 export const string = new schemas.StringSchema();
 
 export function shape(spec) {
-  return parser.parse(spec);
+  return parser.parseShape(spec);
 }
 
 export function listOf(type) {
@@ -28,16 +29,9 @@ export function nullableOf(type) {
 }
 
 export function reactiveShape(spec) {
-  return (function transform(node) {
-    if (node instanceof schemas.ShapeSchema) {
-      const keys = {};
-      for (const key of Object.keys(node.keys)) {
-        keys[key] = transform(node.keys[key]);
-      }
-      return new schemas.ReactiveShapeSchema(keys);
-    } else if (typeof node.transform === 'function') {
-      return node.transform(transform);
-    }
-    return node;
-  }(shape(spec)));
+  return transformReplaceShape(shape(spec), schemas.ReactiveShapeSchema);
+}
+
+export function readOnlyShape(spec) {
+  return transformReplaceShape(shape(spec), schemas.ReadOnlyShapeSchema);
 }

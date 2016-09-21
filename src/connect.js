@@ -1,8 +1,12 @@
 import React from 'react';
 
-import { reactiveShape } from './Types';
-import getReactTypes from './getReactTypes';
 import Autorun from './Autorun';
+import SchemaParser from './SchemaParser';
+import { ReactiveShapeSchema, ReadOnlyShapeSchema } from './schemas';
+import getReactTypes from './utils/getReactTypes';
+import transformReplaceShape from './utils/transformReplaceShape';
+
+const defaultParser = new SchemaParser();
 
 function isFunc(prop) {
   return typeof prop === 'function';
@@ -14,11 +18,18 @@ function setState(state) {
   Autorun.resume();
 }
 
-export default function connect(Component) {
+export default function connect(Component, parser = defaultParser) {
   const { propTypes, stateTypes, contextTypes, childContextTypes, ...statics } = Component;
-  const propsSchema = propTypes && reactiveShape(propTypes);
-  const stateSchema = stateTypes && reactiveShape(stateTypes);
-  const contextSchema = contextTypes && reactiveShape(contextTypes);
+  const propsShape = propTypes && parser.parseShape(propTypes);
+  const stateShape = stateTypes && parser.parseShape(stateTypes);
+  const contextShape = contextTypes && parser.parseShape(contextTypes);
+
+  const propsSchema = propsShape && transformReplaceShape(propsShape, ReactiveShapeSchema);
+  const stateSchema = stateShape && transformReplaceShape(stateShape, ReactiveShapeSchema);
+  const contextSchema = contextShape && transformReplaceShape(contextShape, ReactiveShapeSchema);
+
+  const readOnlyPropsSchema = propsShape && transformReplaceShape(propsShape, ReadOnlyShapeSchema);
+  const readOnlyContextSchema = contextShape && transformReplaceShape(contextShape, ReadOnlyShapeSchema);
 
   class ReactiveComponent extends React.Component {
     static contextTypes = contextTypes && getReactTypes(contextTypes);
@@ -27,9 +38,12 @@ export default function connect(Component) {
     constructor(props, context) {
       super(props, context);
 
+      this.componentProps = propsSchema ? propsSchema.cast(props) : null;
+      this.componentContext = contextSchema ? contextSchema.cast(context) : null;
+
       this.component = Object.create(Component.prototype);
-      Object.defineProperty(this.component, 'props', { value: propsSchema ? propsSchema.cast(props) : null });
-      Object.defineProperty(this.component, 'context', { value: contextSchema ? contextSchema.cast(context) : null });
+      Object.defineProperty(this.component, 'props', { value: propsSchema ? readOnlyPropsSchema.cast(this.componentProps) : null });
+      Object.defineProperty(this.component, 'context', { value: contextSchema ? readOnlyContextSchema.cast(this.componentContext) : null });
       Object.defineProperty(this.component, 'state', { value: stateSchema ? stateSchema.cast() : null });
       Object.defineProperty(this.component, 'setState', { value: setState });
       Object.defineProperty(this.component, 'suspend', { value: ::Autorun.suspend });
@@ -78,11 +92,11 @@ export default function connect(Component) {
 
     componentWillReceiveProps(nextProps, nextContext) {
       Autorun.suspend();
-      if (this.component.props) {
-        Object.assign(this.component.props, nextProps);
+      if (this.componentProps) {
+        Object.assign(this.componentProps, nextProps);
       }
-      if (this.component.context) {
-        Object.assign(this.component.context, nextContext);
+      if (this.componentContext) {
+        Object.assign(this.componentContext, nextContext);
       }
       Autorun.resume();
     }

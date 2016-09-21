@@ -1,12 +1,9 @@
 /* global it expect */
 
 import SchemaParser from './SchemaParser';
-import StringSchema from './schemas/StringSchema';
-import NumberSchema from './schemas/NumberSchema';
+import { string, number } from './Types';
 
 const parser = new SchemaParser();
-const string = new StringSchema();
-const number = new NumberSchema();
 
 it('supports parsing nested schemas', () => {
   const schema = parser.parse({
