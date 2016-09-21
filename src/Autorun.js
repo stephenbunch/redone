@@ -32,6 +32,14 @@ export default class Autorun {
     }
   }
 
+  static never(func) {
+    const current = currentAutorun;
+    currentAutorun = null;
+    const result = func();
+    currentAutorun = current;
+    return result;
+  }
+
   constructor(func, parentComputation = null) {
     if (typeof func !== 'function') {
       throw new Error('The function argument must be a function.');

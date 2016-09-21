@@ -268,3 +268,36 @@ it('can be suspended and resumed', () => {
 
   comp.dispose();
 });
+
+describe('the never function', () => {
+  it('should run the callback outside of any autorun', () => {
+    const dep1 = new Dependency();
+    const dep2 = new Dependency();
+    let called = 0;
+    const comp = Autorun.start(() => {
+      dep1.depend();
+      Autorun.never(() => {
+        dep2.depend();
+      });
+      called += 1;
+    });
+    expect(called).toBe(1);
+
+    dep1.changed();
+    expect(called).toBe(2);
+
+    dep2.changed();
+    expect(called).toBe(2);
+
+    comp.dispose();
+  });
+
+  it('should forward the return value', () => {
+    let result;
+    const comp = Autorun.start(() => {
+      result = Autorun.never(() => 2);
+    });
+    expect(result).toBe(2);
+    comp.dispose();
+  });
+});
