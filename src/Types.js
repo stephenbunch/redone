@@ -35,3 +35,7 @@ export function reactiveShape(spec) {
 export function readOnlyShape(spec) {
   return transformReplaceShape(shape(spec), schemas.ReadOnlyShapeSchema);
 }
+
+export function instanceOf(type) {
+  return new schemas.InstanceSchema(type);
+}
