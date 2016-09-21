@@ -1,6 +1,8 @@
 import Computation from './Computation';
 
 let currentAutorun = null;
+let suspendCount = 0;
+let suspendedAutoruns = [];
 
 export default class Autorun {
   static get current() {
@@ -11,6 +13,23 @@ export default class Autorun {
     const autorun = new Autorun(func);
     autorun.rerun();
     return autorun;
+  }
+
+  static suspend() {
+    suspendCount += 1;
+  }
+
+  static resume() {
+    if (suspendCount > 0) {
+      suspendCount -= 1;
+      if (suspendCount === 0) {
+        const autoruns = suspendedAutoruns;
+        suspendedAutoruns = [];
+        for (const autorun of autoruns) {
+          autorun.rerun();
+        }
+      }
+    }
   }
 
   constructor(func, parentComputation = null) {
@@ -39,6 +58,8 @@ export default class Autorun {
     if (this.func) {
       if (this.parentComputation && !this.parentComputation.isAlive) {
         this.dispose();
+      } else if (suspendCount > 0) {
+        suspendedAutoruns.push(this);
       } else {
         result = this.exec(() => {
           const isFirstRun = this.computation === null;

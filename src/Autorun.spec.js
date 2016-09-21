@@ -242,3 +242,29 @@ describe('the continue function', () => {
     expect(result).toBe(2);
   });
 });
+
+it('can be suspended and resumed', () => {
+  const dep = new Dependency();
+  let called = 0;
+  const comp = Autorun.start(() => {
+    dep.depend();
+    called += 1;
+  });
+  expect(called).toBe(1);
+
+  Autorun.suspend();
+  Autorun.suspend();
+
+  dep.changed();
+  dep.changed();
+
+  expect(called).toBe(1);
+
+  Autorun.resume();
+  expect(called).toBe(1);
+
+  Autorun.resume();
+  expect(called).toBe(2);
+
+  comp.dispose();
+});
