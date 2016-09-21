@@ -56,3 +56,29 @@ it('should setup dependencies', () => {
   expect(result).toBe(3);
   autorun.dispose();
 });
+
+it('should only run once when setting a nested shape node', () => {
+  const shape = new ReactiveShapeSchema({
+    foo: new ReactiveShapeSchema({
+      bar: number,
+      baz: number,
+    }),
+  });
+  const obj = shape.cast();
+
+  let called = 0;
+  const autorun = Autorun.start(() => {
+    obj.foo.bar;
+    obj.foo.baz;
+    called += 1;
+  });
+  expect(called).toBe(1);
+
+  obj.foo = {
+    bar: 3,
+    baz: 4,
+  };
+  expect(called).toBe(2);
+
+  autorun.dispose();
+});
