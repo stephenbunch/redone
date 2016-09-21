@@ -244,10 +244,12 @@ describe('the continue function', () => {
 });
 
 it('can be suspended and resumed', () => {
-  const dep = new Dependency();
+  const dep1 = new Dependency();
+  const dep2 = new Dependency();
   let called = 0;
   const comp = Autorun.start(() => {
-    dep.depend();
+    dep1.depend();
+    dep2.depend();
     called += 1;
   });
   expect(called).toBe(1);
@@ -255,8 +257,8 @@ it('can be suspended and resumed', () => {
   Autorun.suspend();
   Autorun.suspend();
 
-  dep.changed();
-  dep.changed();
+  dep1.changed();
+  dep2.changed();
 
   expect(called).toBe(1);
 

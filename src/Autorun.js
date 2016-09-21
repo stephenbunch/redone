@@ -67,7 +67,9 @@ export default class Autorun {
       if (this.parentComputation && !this.parentComputation.isAlive) {
         this.dispose();
       } else if (suspendCount > 0) {
-        suspendedAutoruns.push(this);
+        if (suspendedAutoruns.indexOf(this) === -1) {
+          suspendedAutoruns.push(this);
+        }
       } else {
         result = this.exec(() => {
           const isFirstRun = this.computation === null;
