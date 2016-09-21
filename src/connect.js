@@ -43,7 +43,7 @@ export default function connect(Component) {
 
       if (isFunc(this.component.compute)) {
         this.computeAutorun = Autorun.start(comp => {
-          this.component.compute(comp, ::Autorun.never);
+          this.component.compute(comp);
         });
       } else {
         this.computeAutorun = null;
@@ -55,7 +55,9 @@ export default function connect(Component) {
         this.childContextAutorun = Autorun.start(comp => {
           this.childContext = this.component.getChildContext();
           if (!comp.isFirstRun) {
-            this.forceUpdate();
+            Autorun.never(() => {
+              this.forceUpdate();
+            });
           }
         });
       }
