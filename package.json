@@ -1,6 +1,6 @@
 {
   "name": "redone",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Predictable computations for JavaScript apps.",
   "main": "lib/index.js",
   "scripts": {
