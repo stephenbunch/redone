@@ -398,3 +398,26 @@ it('should forward setState calls for easier testing', () => {
 
   wrapper.unmount();
 });
+
+it('should expose the state object for easier testing', () => {
+  const Foo = connect(class {
+    static stateTypes = {
+      value: number,
+    };
+
+    constructor() {
+      this.state.value = 2;
+    }
+
+    render() {
+      return (
+        <div>{this.state.value}</div>
+      );
+    }
+  });
+
+  const wrapper = mount(<Foo />);
+  expect(wrapper.state('value')).toBe(2);
+
+  wrapper.unmount();
+});

@@ -47,11 +47,12 @@ export default function connect(Component, parser = defaultParser) {
 
       this.componentProps = propsSchema ? propsSchema.cast(props) : null;
       this.componentContext = contextSchema ? contextSchema.cast(context) : null;
+      this.state = stateSchema ? stateSchema.cast() : null;
 
       this.component = Object.create(Component.prototype);
       Object.defineProperty(this.component, 'props', { value: propsSchema ? readOnlyPropsSchema.cast(this.componentProps) : null });
       Object.defineProperty(this.component, 'context', { value: contextSchema ? readOnlyContextSchema.cast(this.componentContext) : null });
-      Object.defineProperty(this.component, 'state', { value: stateSchema ? stateSchema.cast() : null });
+      Object.defineProperty(this.component, 'state', { value: this.state });
       Object.defineProperty(this.component, 'setState', { value: setState });
       Object.defineProperty(this.component, 'suspend', { value: ::Autorun.suspend });
       Object.defineProperty(this.component, 'resume', { value: ::Autorun.resume });
