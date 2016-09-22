@@ -1,7 +1,7 @@
 /* global it expect */
 
 import SchemaParser from './SchemaParser';
-import { string, number } from './Types';
+import { string, number } from './types';
 
 const parser = new SchemaParser();
 
