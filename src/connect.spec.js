@@ -374,3 +374,27 @@ it('defaultProps should work', () => {
   expect(called).toBe(true);
   wrapper.unmount();
 });
+
+it('should forward setState calls for easier testing', () => {
+  const Foo = connect(class {
+    static stateTypes = {
+      value: number,
+    };
+
+    render() {
+      return (
+        <div>{this.state.value}</div>
+      );
+    }
+  });
+
+  const wrapper = mount(<Foo />);
+  expect(wrapper.find('div').text()).toBe('0');
+
+  wrapper.setState({
+    value: 2,
+  });
+  expect(wrapper.find('div').text()).toBe('2');
+
+  wrapper.unmount();
+});

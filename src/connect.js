@@ -134,6 +134,10 @@ export default function connect(Component, parser = defaultParser) {
       this.component = null;
     }
 
+    setState(state) {
+      this.component.setState(state);
+    }
+
     render() {
       if (isFunc(this.component.render)) {
         if (this.renderAutorun === null) {
