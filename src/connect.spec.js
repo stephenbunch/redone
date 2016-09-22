@@ -4,7 +4,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { number, func } from './Types';
+import { number, func } from './types';
 import connect from './connect';
 
 it('props should be read-only', () => {

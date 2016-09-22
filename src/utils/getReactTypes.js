@@ -1,5 +1,5 @@
 import React from 'react';
-import { shape } from '../Types';
+import { shape } from '../types';
 import {
   ArraySchema,
   BooleanSchema,

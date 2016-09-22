@@ -2,7 +2,7 @@
 
 import React from 'react';
 import getReactTypes from './getReactTypes';
-import { number, string, func, bool } from '../Types';
+import { number, string, func, bool } from '../types';
 
 it('should return the react types', () => {
   const types = getReactTypes({
