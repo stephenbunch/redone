@@ -1,14 +1,15 @@
 {
   "name": "redone",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Predictable computations for JavaScript apps.",
   "main": "lib/index.js",
   "scripts": {
-    "prepublish": "npm run build && npm run bundle",
+    "prepublish": "npm run eslint && npm run build && npm run bundle",
     "build": "rm -rf lib && babel src --out-dir lib",
     "bundle": "rm -rf dist && webpack",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "eslint": "eslint src/**"
   },
   "repository": {
     "type": "git",
