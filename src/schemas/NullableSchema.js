@@ -7,7 +7,7 @@ export default class NullableSchema extends AnySchema {
   }
 
   cast(value) {
-    if (value === null) {
+    if (value === null || value === undefined) {
       return null;
     }
     return this.schema.cast(value);
