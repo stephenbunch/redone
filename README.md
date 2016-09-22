@@ -303,23 +303,27 @@ class Counter {
 
   static stateTypes = {
     value: number,
+    square: number,
+  };
+
+  static defaultProps = {
+    value: 1
   };
 
   constructor(props) {
     this.state.value = props.initialValue;
   }
 
+  compute() {
+    this.state.square = Math.pow(this.state.value, 2);
+  }
+
   render() {
     return (
       <div>
-        {this.state.value}{' '}
-        <button
-          onClick={() => {
-            state.value += 1;
-          }}
-        >
-          add
-        </button>
+        Value: {this.state.value}<br />
+        Square: {this.state.square}<br />
+        <button onClick={() => state.value += 1}>add</button>
       </div>
     );
   }
