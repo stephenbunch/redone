@@ -293,6 +293,7 @@ Generates a new React Component class using the specified class as a template. F
 * The `compute` hook is the only function that can be async and has access to the computation object.
 
 ```js
+import React from 'react';
 import { connect } from 'redone';
 import { number } from 'redone/types';
 
