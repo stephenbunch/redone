@@ -323,7 +323,7 @@ class Counter {
       <div>
         Value: {this.state.value}<br />
         Square: {this.state.square}<br />
-        <button onClick={() => state.value += 1}>add</button>
+        <button onClick={() => this.state.value += 1}>add</button>
       </div>
     );
   }
