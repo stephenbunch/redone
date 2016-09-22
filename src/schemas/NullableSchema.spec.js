@@ -14,5 +14,5 @@ it('should inherit from AnySchema', () => {
 it('should return null if value is null', () => {
   const schema = new NullableSchema(string);
   expect(schema.cast(null)).toBe(null);
-  expect(schema.cast(undefined)).toEqual('');
+  expect(schema.cast(undefined)).toEqual(null);
 });
