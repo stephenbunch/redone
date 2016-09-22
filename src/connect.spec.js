@@ -352,3 +352,25 @@ it('should validate the component type', () => {
     connect('foo');
   }).toThrow();
 });
+
+it('defaultProps should work', () => {
+  let called = false;
+  const Foo = connect(class {
+    static defaultProps = {
+      foo: 2,
+    };
+
+    static propTypes = {
+      foo: number,
+    };
+
+    constructor(props) {
+      expect(props.foo).toBe(2);
+      called = true;
+    }
+  });
+
+  const wrapper = mount(<Foo />);
+  expect(called).toBe(true);
+  wrapper.unmount();
+});
