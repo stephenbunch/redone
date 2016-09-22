@@ -19,6 +19,13 @@ function setState(state) {
 }
 
 export default function connect(Component, parser = defaultParser) {
+  if (typeof Component !== 'function') {
+    throw new Error('Component must be a class.');
+  }
+  if (Component.prototype instanceof React.Component) {
+    throw new Error('Component should not inherit from React.Component.');
+  }
+
   const { propTypes, stateTypes, contextTypes, childContextTypes, ...statics } = Component;
   const propsShape = propTypes && parser.parseShape(propTypes);
   const stateShape = stateTypes && parser.parseShape(stateTypes);

@@ -343,3 +343,12 @@ it('context should be read-only', () => {
   expect(called).toBe(true);
   wrapper.unmount();
 });
+
+it('should validate the component type', () => {
+  expect(() => {
+    connect(class Foo extends React.Component {});
+  }).toThrow();
+  expect(() => {
+    connect('foo');
+  }).toThrow();
+});
