@@ -8,7 +8,6 @@
     "build": "rm -rf lib && babel src --out-dir lib",
     "bundle": "rm -rf dist && webpack",
     "test": "jest",
-    "coverage": "jest --coverage",
     "eslint": "eslint src/**"
   },
   "repository": {
@@ -42,6 +41,8 @@
     "react": "^15.3.2"
   },
   "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
     "moduleFileExtensions": [
       "js",
       "jsx",
