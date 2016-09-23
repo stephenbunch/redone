@@ -349,7 +349,7 @@ export default connect(Counter);
 
 [npm-image]: https://img.shields.io/npm/v/redone.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/redone
-[travis-image]: https://img.shields.io/travis/stephenbunch/redone/master.svg?style=flat-square
+[travis-image]: https://img.shields.io/travis/stephenbunch/redone.svg?style=flat-square
 [travis-url]: https://travis-ci.org/stephenbunch/redone
-[codecov-image]: https://codecov.io/github/stephenbunch/redone/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/stephenbunch/redone?branch=master
+[codecov-image]: https://img.shields.io/codecov/c/github/stephenbunch/redone.svg?style=flat-square
+[codecov-url]: https://codecov.io/github/stephenbunch/redone
