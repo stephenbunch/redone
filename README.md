@@ -12,6 +12,7 @@
   * [`bool`](#bool)
   * [`date`](#date)
   * [`func`](#func)
+  * [`funcOf(type)`](#funcoftype)
   * [`instanceOf(type)`](#instanceoftype)
   * [`nullableOf(type)`](#nullableoftype)
   * [`number`](#number)
@@ -199,6 +200,15 @@ import { func } from 'redone/types';
 func.cast('foo'); // () => {}
 ```
 
+### `funcOf(type)`
+Generates a schema that ensures that a value is a function that returns a specific type.
+```js
+import { funcOf, number } from 'redone/types';
+
+const func = () => '3';
+funcOf(number).cast(func)(); // 3
+```
+
 ### `instanceOf(type)`
 Generates a schema that asserts a value to be an instance of a certain type. **This schema throws an error instead of doing an implicit cast.**
 ```js
@@ -221,7 +231,7 @@ import { nullableOf, string } from 'redone/types';
 const nullableString = nullableOf(string);
 nullableString.cast(''); // ''
 nullableString.cast(null); // null
-nullableString.cast(); // ''
+nullableString.cast(); // null
 ```
 
 ### `number`
