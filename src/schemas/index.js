@@ -3,6 +3,7 @@ export ArraySchema from './ArraySchema';
 export BooleanSchema from './BooleanSchema';
 export DateSchema from './DateSchema';
 export FunctionSchema from './FunctionSchema';
+export GenericFunctionSchema from './GenericFunctionSchema';
 export InstanceSchema from './InstanceSchema';
 export NullableSchema from './NullableSchema';
 export NumberSchema from './NumberSchema';
