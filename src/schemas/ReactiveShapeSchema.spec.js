@@ -7,6 +7,7 @@ import Autorun from '../Autorun';
 import FunctionSchema from './FunctionSchema';
 
 const number = new NumberSchema();
+const func = new FunctionSchema();
 
 it('should inherit from ShapeSchema', () => {
   const shape = new ReactiveShapeSchema({
@@ -91,7 +92,21 @@ it('should automatically bind function values', () => {
     },
   };
   const shape = new ReactiveShapeSchema({
-    bar: new FunctionSchema(),
+    bar: func,
   });
   expect(shape.cast(foo).bar()).toBe(foo);
+});
+
+it('should have a toObject method', () => {
+  const shape = new ReactiveShapeSchema({
+    foo: number,
+  });
+  expect(shape.cast().toObject()).toEqual({ foo: 0 });
+});
+
+it('should have a toJSON method', () => {
+  const shape = new ReactiveShapeSchema({
+    foo: number,
+  });
+  expect(shape.cast().toJSON()).toEqual({ foo: 0 });
 });

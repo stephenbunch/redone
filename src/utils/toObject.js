@@ -1,6 +1,6 @@
 export default function toObject(obj, keys) {
   const retval = {};
-  for (const key of Object.keys(keys)) {
+  for (const key of keys) {
     let value = obj[key];
     if (
       typeof value === 'object' &&

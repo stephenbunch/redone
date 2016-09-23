@@ -11,11 +11,11 @@ function createClass(keys) {
     }
 
     toObject() {
-      return toObject(this, keys);
+      return toObject(this, Object.keys(keys));
     }
 
     toJSON() {
-      return toJson(this, keys);
+      return toJson(this, Object.keys(keys));
     }
   }
 

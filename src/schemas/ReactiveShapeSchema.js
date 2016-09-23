@@ -1,4 +1,3 @@
-import Autorun from '../Autorun';
 import KeyedDependency from '../KeyedDependency';
 import ShapeSchema from './ShapeSchema';
 import toObject from '../utils/toObject';
@@ -25,24 +24,18 @@ function createClass(keys) {
       Object.defineProperty(this, '__VALUES', {
         value: new Map(),
       });
-      Object.keys(keys).forEach(key => {
-        if (Autorun.current) {
-          Autorun.current.computation.fork(() => {
-            this[key] = getValue(source, key);
-          });
-        } else {
-          this[key] = getValue(source, key);
-        }
-      });
+      for (const key of Object.keys(keys)) {
+        this[key] = getValue(source, key);
+      }
       this.__INITIALIZED = true;
     }
 
     toObject() {
-      return toObject(this, keys);
+      return toObject(this, Object.keys(keys));
     }
 
     toJSON() {
-      return toJson(this, keys);
+      return toJson(this, Object.keys(keys));
     }
   }
 

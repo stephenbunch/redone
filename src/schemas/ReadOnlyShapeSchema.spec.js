@@ -38,3 +38,23 @@ it('should work with nested objects', () => {
   obj.foo.bar = '5';
   expect(proxy.foo.bar).toBe(5);
 });
+
+it('should have a toObject method', () => {
+  const shape = new ReadOnlyShapeSchema({
+    foo: number,
+  });
+  expect(shape.cast().toObject()).toEqual({ foo: 0 });
+});
+
+it('should have a toJSON method', () => {
+  const shape = new ReadOnlyShapeSchema({
+    foo: number,
+  });
+  expect(shape.cast().toJSON()).toEqual({ foo: 0 });
+});
+
+it('should pass through if the value is already of the same type', () => {
+  const shape = new ReadOnlyShapeSchema({});
+  const obj = shape.cast();
+  expect(shape.cast(obj)).toBe(obj);
+});

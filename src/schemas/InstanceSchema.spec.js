@@ -17,3 +17,7 @@ it('should throw an error when casting something of a different instance', () =>
     schema.cast(new Bar());
   }).toThrow();
 });
+
+it('should throw an error if type is not a class', () => {
+  expect(() => new InstanceSchema()).toThrow();
+});
