@@ -4,6 +4,7 @@ import ShapeSchema from './ShapeSchema';
 import ReactiveShapeSchema from './ReactiveShapeSchema';
 import NumberSchema from './NumberSchema';
 import Autorun from '../Autorun';
+import FunctionSchema from './FunctionSchema';
 
 const number = new NumberSchema();
 
@@ -81,4 +82,16 @@ it('should only run once when setting a nested shape node', () => {
   expect(called).toBe(2);
 
   autorun.dispose();
+});
+
+it('should automatically bind function values', () => {
+  const foo = {
+    bar() {
+      return this;
+    },
+  };
+  const shape = new ReactiveShapeSchema({
+    bar: new FunctionSchema(),
+  });
+  expect(shape.cast(foo).bar()).toBe(foo);
 });

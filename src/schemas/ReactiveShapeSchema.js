@@ -4,6 +4,14 @@ import ShapeSchema from './ShapeSchema';
 import toObject from '../utils/toObject';
 import toJson from '../utils/toJson';
 
+function getValue(obj, key) {
+  const value = obj[key];
+  if (typeof value === 'function') {
+    return value.bind(obj);
+  }
+  return value;
+}
+
 function createClass(keys) {
   class ReactiveShape {
     constructor(source) {
@@ -20,10 +28,10 @@ function createClass(keys) {
       Object.keys(keys).forEach(key => {
         if (Autorun.current) {
           Autorun.current.computation.fork(() => {
-            this[key] = source[key];
+            this[key] = getValue(source, key);
           });
         } else {
-          this[key] = source[key];
+          this[key] = getValue(source, key);
         }
       });
       this.__INITIALIZED = true;
