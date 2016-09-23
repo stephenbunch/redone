@@ -1,4 +1,4 @@
-# Redone
+# Redone [![Build Status](https://api.travis-ci.org/stephenbunch/redone.png)](https://travis-ci.org/stephenbunch/redone)
 
 ## Table of Contents
 * [Introduction](#introduction)
