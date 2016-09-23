@@ -1,6 +1,7 @@
 /* global it expect */
 
 import SchemaParser from './SchemaParser';
+import InstanceSchema from './schemas/InstanceSchema';
 import { string, number } from './types';
 
 const parser = new SchemaParser();
@@ -29,4 +30,10 @@ it('supports parsing nested schemas', () => {
     }],
     baz: '2',
   });
+});
+
+it('should parse functions as instanceOf types', () => {
+  const schema = parser.parse(Promise);
+  expect(schema instanceof InstanceSchema).toBe(true);
+  expect(schema.type).toBe(Promise);
 });

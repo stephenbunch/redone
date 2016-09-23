@@ -1,4 +1,4 @@
-import { AnySchema, ArraySchema, ShapeSchema } from './schemas';
+import { AnySchema, ArraySchema, ShapeSchema, InstanceSchema } from './schemas';
 
 const defaultList = schema => new ArraySchema(schema);
 const defaultShape = keys => new ShapeSchema(keys);
@@ -29,6 +29,8 @@ export default class SchemaParser {
         keys[key] = this.parse(value[key]);
       }
       return this.shape(keys);
+    } else if (typeof value === 'function') {
+      return new InstanceSchema(value);
     }
     throw new Error(`Could not parse schema value '${JSON.stringify(value)}'.`);
   }
