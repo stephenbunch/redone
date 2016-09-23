@@ -13,3 +13,7 @@ it('should pass through if the value is already a date instance', () => {
   const value = new Date();
   expect(date.cast(value)).toBe(value);
 });
+
+it('should falsey values to a min date', () => {
+  expect(+date.cast('')).toBe(+new Date(null));
+});

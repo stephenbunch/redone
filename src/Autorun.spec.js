@@ -172,6 +172,17 @@ describe('the fork function', () => {
     expect(result).toBe(2);
     autorun.dispose();
   });
+
+  it('should return undefined if the autorun has been disposed', async () => {
+    let result = 'foo';
+    const autorun = Autorun.start(async comp => {
+      await Promise.resolve();
+      result = comp.fork(() => 2);
+    });
+    autorun.dispose();
+    await autorun.value;
+    expect(result).toBe(undefined);
+  });
 });
 
 describe('the continue function', () => {

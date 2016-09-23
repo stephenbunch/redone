@@ -14,11 +14,6 @@ export default class ArraySchema extends AnySchema {
   }
 
   transform(transform) {
-    let item = this.item;
-    if (typeof item.transform === 'function') {
-      item = item.transform(transform);
-    }
-    item = transform(item);
-    return new this.constructor(item);
+    return new this.constructor(transform(this.item));
   }
 }

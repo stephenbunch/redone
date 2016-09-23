@@ -23,11 +23,7 @@ export default class ShapeSchema extends AnySchema {
   transform(transform) {
     const keys = {};
     for (const key of Object.keys(this.keys)) {
-      if (typeof this.keys[key].transform === 'function') {
-        keys[key] = transform(this.keys[key].transform(transform));
-      } else {
-        keys[key] = transform(this.keys[key]);
-      }
+      keys[key] = transform(this.keys[key]);
     }
     return new this.constructor(keys);
   }
