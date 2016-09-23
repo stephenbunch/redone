@@ -1,4 +1,8 @@
-# Redone [![Build Status](https://api.travis-ci.org/stephenbunch/redone.png)](https://travis-ci.org/stephenbunch/redone)
+# Redone
+
+[![NPM version][npm-image]][npm-url]
+[![Build status][travis-image]][travis-url]
+[![Test coverage][codecov-image]][codecov-url]
 
 ## Table of Contents
 * [Introduction](#introduction)
@@ -342,3 +346,10 @@ class Counter {
 
 export default connect(Counter);
 ```
+
+[npm-image]: https://img.shields.io/npm/v/redone.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/redone
+[travis-image]: https://img.shields.io/travis/stephenbunch/redone/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/stephenbunch/redone
+[codecov-image]: https://codecov.io/github/stephenbunch/redone/coverage.svg?branch=master
+[codecov-url]: https://codecov.io/github/stephenbunch/redone?branch=master
