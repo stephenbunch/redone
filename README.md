@@ -321,10 +321,6 @@ class Counter {
     square: number,
   };
 
-  static defaultProps = {
-    value: 1
-  };
-
   constructor(props) {
     this.state.value = props.initialValue;
   }
