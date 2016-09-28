@@ -109,6 +109,10 @@ export default function connect(Component, parser = defaultParser) {
       Autorun.resume();
     }
 
+    shouldComponentUpdate() {
+      return false;
+    }
+
     componentDidUpdate() {
       if (isFunc(this.component.componentDidUpdate)) {
         this.component.componentDidUpdate();
