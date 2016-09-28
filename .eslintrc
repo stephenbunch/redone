@@ -10,6 +10,7 @@
     "no-shadow": "off",
     "no-underscore-dangle": "off",
     "no-unused-expressions": "off",
+    "quote-props": "off",
     "react/prefer-stateless-function": "off",
     "react/jsx-filename-extension": "off",
   },
