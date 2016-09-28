@@ -7,13 +7,7 @@ export default class GenericFunctionSchema extends AnySchema {
   }
 
   cast(value) {
-    const func = do {
-      if (typeof value === 'function') {
-        value;
-      } else {
-        () => {};
-      }
-    };
+    const func = typeof value === 'function' ? value : () => {};
     return (...args) => this.out.cast(func(...args));
   }
 
