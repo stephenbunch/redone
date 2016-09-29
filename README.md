@@ -37,7 +37,7 @@ To create an autorun, you pass a callback. When the autorun is created, the call
 
 Autoruns don't return values, they set them.
 
-Once you're inside an autorun, you have access to a **computation** object. This object can be used spin off child autoruns (called **forks**) or string together multiple segments of an async computation. A fork is like a forked process. It does its own thing, but its lifecycle is synced with the parent. If the parent is cleaned up, the fork is cleaned up as well. With async computations, later segments are automatically skipped once a computation is rerun. This ensures that you never have reruns finishing in the wrong order.
+Once you're inside an autorun, you have access to a **computation** object. This object can be used spin off child autoruns (called **forks**) or string together multiple segments of an async computation. A fork is like a forked process. It does its own thing, but its lifecycle is attached to the parent. If the parent is cleaned up, the fork is cleaned up as well. With async computations, **continuations** are automatically skipped once a computation is rerun. This ensures that you never have an earlier async computation overwrite the results of a rerun in the event that the first run takes longer to resolve than the second.
 
 ### A simple example
 ```js
