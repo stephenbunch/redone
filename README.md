@@ -28,7 +28,7 @@
 
 
 ## Introduction
-Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state as is the case with Flux and Redux, Redone focuses on providing consistent computations. It does this by decoupling data providers from their consumers, localizing state, and enforcing contracts at runtime.
+Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state as is the case with Flux and Redux, Redone focuses on providing consistent computations. It does this by decoupling data providers from their consumers, localizing state, disallowing circular data dependencies, and enforcing contracts at runtime.
 
 ## Autoruns
 An **autorun** is a runner that executes a block of code whenever **dependencies** of that block change. Think of it like webpack in "watch mode" and how it rebuilds the bundle whenever an imported file changes. In this analogy, webpack is the autorun, the build is an arbitrary function, and the files are just variables in your app.
