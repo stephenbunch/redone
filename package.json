@@ -1,7 +1,7 @@
 {
   "name": "redone",
   "version": "0.3.9",
-  "description": "Predictable computations for JavaScript apps.",
+  "description": "Predictable relationships between React components.",
   "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run eslint && npm run build && npm run bundle",
