@@ -10,6 +10,7 @@
   * [A simple example](#a-simple-example)
   * [Forked computations](#forked-computations)
   * [Async computations](#async-computations)
+  * [Preventing circular data dependencies](#preventing-circular-data-dependencies)
 * [Types](#types)
   * [`any`](#any)
   * [`arrayOf(type)`](#arrayoftype)
@@ -151,6 +152,30 @@ dep1.changed();
 autorun.dispose();
 await autorun.value;
 // (nothing printed)
+```
+
+### Preventing circular data dependencies
+A circular data dependency occurs when an autorun changes a value that it depends on. For example:
+```js
+const dep = new Dependency();
+Autorun.start(() => {
+  dep.depend();
+  dep.changed(); // throws error
+});
+```
+
+One of the main reasons Flux was created was to prevent circular data dependencies between components. If Redone didn't throw an error, we'd get stuck in an infinite loop. Redone doesn't care how data gets manipulated, as long as the source that consumes the data is different than the source that changes the data.
+
+Circular data dependencies are also prevented in async computations:
+```js
+const dep = new Dependency();
+Autorun.start(async comp => {
+  dep.depend();
+  await Promise.resolve();
+  comp.continue(() => {
+    dep.changed(); // throws error
+  });
+});
 ```
 
 ## Types

@@ -18,7 +18,10 @@ export default class Dependency {
     this.dependents = [];
     for (const computation of deps) {
       if (computation.isAlive) {
-        if (computation.stack.indexOf(Autorun.current) > -1) {
+        if (
+          computation.autorun === Autorun.current ||
+          computation.stack.indexOf(Autorun.current) > -1
+        ) {
           throw new Error('Circular dependencies are not allowed.');
         }
         computation.autorun.rerun();

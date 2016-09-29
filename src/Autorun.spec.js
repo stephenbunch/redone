@@ -377,7 +377,6 @@ it('should throw an error when a circular dependency is detected between multipl
       dep.changed();
     });
   });
-  await autorun.value;
 
   let error;
   try {
