@@ -15,17 +15,14 @@ export default class Dependency {
 
   changed() {
     const deps = this.dependents;
-    const addBack = [];
     this.dependents = [];
     for (const computation of deps) {
       if (computation.isAlive) {
-        if (Autorun.current === computation.autorun) {
-          addBack.push(computation);
-        } else {
-          computation.autorun.rerun();
+        if (computation.stack.indexOf(Autorun.current) > -1) {
+          throw new Error('Circular dependencies are not allowed.');
         }
+        computation.autorun.rerun();
       }
     }
-    this.dependents = [...this.dependents, ...addBack];
   }
 }

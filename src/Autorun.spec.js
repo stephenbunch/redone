@@ -135,18 +135,14 @@ it('should work with async computations', async () => {
   autorun.dispose();
 });
 
-it('should not run again if a dependency is changed during the run', () => {
+it('should throw an error if a circular dependency is detected', () => {
   const dep = new Dependency();
-  let count = 0;
-  const autorun = Autorun.start(() => {
-    count += 1;
-    dep.depend();
-    dep.changed();
-  });
-  expect(count).toBe(1);
-  dep.changed();
-  expect(count).toBe(2);
-  autorun.dispose();
+  expect(() => {
+    Autorun.start(() => {
+      dep.depend();
+      dep.changed();
+    });
+  }).toThrow();
 });
 
 describe('the fork function', () => {
@@ -258,7 +254,7 @@ it('can be suspended and resumed', () => {
   const dep1 = new Dependency();
   const dep2 = new Dependency();
   let called = 0;
-  const comp = Autorun.start(() => {
+  const autorun = Autorun.start(() => {
     dep1.depend();
     dep2.depend();
     called += 1;
@@ -279,7 +275,7 @@ it('can be suspended and resumed', () => {
   Autorun.resume();
   expect(called).toBe(2);
 
-  comp.dispose();
+  autorun.dispose();
 });
 
 describe('the never function', () => {
@@ -287,7 +283,7 @@ describe('the never function', () => {
     const dep1 = new Dependency();
     const dep2 = new Dependency();
     let called = 0;
-    const comp = Autorun.start(() => {
+    const autorun = Autorun.start(() => {
       dep1.depend();
       Autorun.never(() => {
         dep2.depend();
@@ -302,15 +298,112 @@ describe('the never function', () => {
     dep2.changed();
     expect(called).toBe(2);
 
-    comp.dispose();
+    autorun.dispose();
   });
 
   it('should forward the return value', () => {
     let result;
-    const comp = Autorun.start(() => {
+    const autorun = Autorun.start(() => {
       result = Autorun.never(() => 2);
     });
     expect(result).toBe(2);
-    comp.dispose();
+    autorun.dispose();
   });
+});
+
+it('should throw an error when a circular dependency is detected between two computations', () => {
+  const dep1 = new Dependency();
+  const dep2 = new Dependency();
+
+  const auto1 = Autorun.start(() => {
+    dep1.depend();
+    dep2.changed();
+  });
+
+  expect(() => {
+    Autorun.start(() => {
+      dep2.depend();
+      dep1.changed();
+    });
+  }).toThrow();
+
+  auto1.dispose();
+});
+
+it('should throw an error when a circular dependency is detected between two async computations', async () => {
+  const dep1 = new Dependency();
+  const dep2 = new Dependency();
+
+  // 1. run auto1
+  // 2. run auto2 -> dep1 changed -> run auto1 -> dep2 changed -> run auto2 -> dep1 changed -> error!
+
+  const auto1 = Autorun.start(async comp => {
+    dep1.depend();
+    await Promise.resolve();
+    comp.continue(() => {
+      dep2.changed();
+    });
+  });
+  await auto1.value;
+
+  const auto2 = Autorun.start(async comp => {
+    dep2.depend();
+    await Promise.resolve();
+    comp.continue(() => {
+      dep1.changed();
+    });
+  });
+  await auto2.value;
+  await auto1.value;
+
+  let error;
+  try {
+    await auto2.value;
+  } catch (err) {
+    error = err;
+  }
+  expect(error instanceof Error).toBe(true);
+
+  auto1.dispose();
+  auto2.dispose();
+});
+
+it('should throw an error when a circular dependency is detected between multiple segments of the same async computation', async () => {
+  const dep = new Dependency();
+  const autorun = Autorun.start(async comp => {
+    dep.depend();
+    await Promise.resolve();
+    comp.continue(() => {
+      dep.changed();
+    });
+  });
+  await autorun.value;
+
+  let error;
+  try {
+    await autorun.value;
+  } catch (err) {
+    error = err;
+  }
+  expect(error instanceof Error).toBe(true);
+  autorun.dispose();
+});
+
+it('should throw an error when a circular dependency is detected between two forks', () => {
+  const dep1 = new Dependency();
+  const dep2 = new Dependency();
+
+  expect(() => {
+    Autorun.start(comp => {
+      comp.fork(() => {
+        dep1.depend();
+        dep2.changed();
+      });
+
+      comp.fork(() => {
+        dep2.depend();
+        dep1.changed();
+      });
+    });
+  }).toThrow();
 });

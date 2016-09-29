@@ -3,6 +3,8 @@ import Computation from './Computation';
 let currentAutorun = null;
 let suspendCount = 0;
 let suspendedAutoruns = [];
+const autorunStack = [];
+let uid = 0;
 
 export default class Autorun {
   static get current() {
@@ -44,6 +46,7 @@ export default class Autorun {
     if (typeof func !== 'function') {
       throw new Error('The function argument must be a function.');
     }
+    this.id = ++uid;
     this.func = func;
     this.computation = null;
     this.parentComputation = parentComputation;
@@ -56,8 +59,10 @@ export default class Autorun {
 
   dispose() {
     this.func = null;
-    this.computation.dispose();
-    this.computation = null;
+    if (this.computation) {
+      this.computation.dispose();
+      this.computation = null;
+    }
     this.parentComputation = null;
   }
 
@@ -76,8 +81,13 @@ export default class Autorun {
           if (this.computation) {
             this.computation.dispose();
           }
-          this.computation = new Computation(this, isFirstRun);
-          this.value = this.func(this.computation);
+          this.computation = new Computation(this, isFirstRun, autorunStack.slice());
+          try {
+            this.value = this.func(this.computation);
+          } catch (err) {
+            this.dispose();
+            throw err;
+          }
           return this.value;
         });
       }
@@ -86,10 +96,18 @@ export default class Autorun {
   }
 
   exec(func) {
+    if (currentAutorun) {
+      autorunStack.push(currentAutorun);
+    }
     const current = currentAutorun;
     currentAutorun = this;
-    const result = func();
-    currentAutorun = current;
-    return result;
+    try {
+      return func();
+    } finally {
+      currentAutorun = current;
+      if (currentAutorun) {
+        autorunStack.pop();
+      }
+    }
   }
 }

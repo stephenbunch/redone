@@ -7,6 +7,7 @@
     "max-len": "off",
     "no-confusing-arrow": "off",
     "no-param-reassign": "off",
+    "no-plusplus": "off",
     "no-shadow": "off",
     "no-underscore-dangle": "off",
     "no-unused-expressions": "off",
