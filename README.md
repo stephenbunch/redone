@@ -168,6 +168,7 @@ Redone can also detect circular dependencies between multiple autoruns:
 ```js
 const dep1 = new Dependency();
 const dep2 = new Dependency();
+
 const auto1 Autorun.start(() => {
   dep1.depend();
   dep2.changed(); // throws an error on the 2nd time around
