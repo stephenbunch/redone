@@ -13,7 +13,7 @@
 * [`componentDidMount`](#componentdidmount)
 * [`componentDidUpdate`](#componentdidupdate)
 * [`componentWillUnmount`](#componentwillunmount)
-* [`setState`](#setstate)
+* [`setState(nextState, callback)`](#setstatenextstate-callback)
 
 ## Introduction
 The following API describes how to define Redone components. It's important to note that this API is similar to React's [ES6 API](https://facebook.github.io/react/docs/reusable-components.html#es6-classes), but is not the same. **One major difference is the component class you write should not inherit from `React.Component`.** The actual React component is only created after calling the `connect` function.
