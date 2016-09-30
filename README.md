@@ -25,7 +25,7 @@ An **autorun** is a runner that executes a callback whenever **data dependencies
 
 To create an autorun, you pass a callback. When the autorun is created, the callback is run immediately. During execution, dependencies are tracked by the autorun. Whenever a dependency changes, the autorun is notified and the callback is rerun.
 
-It's important to note that the `dependency` object doesn't store any data itself. It's job is to let autoruns know when a piece of data is being depended on, and when it's time to rerun because the data changed. It doesn't manage the data itself.
+It's important to note that the dependency object doesn't store any data itself. It's job is to let autoruns know when a piece of data is being depended on, and when it's time to rerun because the data changed. It doesn't manage the data itself.
 
 **Autoruns don't return values, they set them.**
 
