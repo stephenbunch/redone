@@ -108,10 +108,12 @@ const App = connect(
       isLoading: bool,
     }
 
-    async compute() {
+    async compute(comp) {
       this.state.isLoading = true;
       await Promise.resolve();
-      this.state.isLoading = false;
+      comp.continue(() => {
+        this.state.isLoading = false;
+      });
     }
 
     render() {
