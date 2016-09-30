@@ -28,7 +28,7 @@ export default function connect(Component, parser = defaultParser) {
 
   const { propTypes, stateTypes, contextTypes, childContextTypes, ...statics } = Component;
   const propsShape = propTypes && parser.parseShape(propTypes);
-  const stateShape = stateTypes && parser.parseShape(stateTypes);
+  const stateShape = stateTypes && parser.parseShape({ value: stateTypes });
   const contextShape = contextTypes && parser.parseShape(contextTypes);
 
   const propsSchema = propsShape && transformReplaceShape(propsShape, ReactiveShapeSchema);
@@ -47,12 +47,29 @@ export default function connect(Component, parser = defaultParser) {
 
       this.componentProps = propsSchema ? propsSchema.cast(props) : null;
       this.componentContext = contextSchema ? contextSchema.cast(context) : null;
-      this.state = stateSchema ? stateSchema.cast() : null;
+
+      const state = stateSchema ? stateSchema.cast() : null;
+      Object.defineProperty(this, 'state', {
+        get: () => state && state.value,
+        set: nextState => {
+          if (state) {
+            state.value = nextState;
+          }
+        }
+      });
 
       this.component = Object.create(Component.prototype);
       Object.defineProperty(this.component, 'props', { value: propsSchema ? readOnlyPropsSchema.cast(this.componentProps) : null });
       Object.defineProperty(this.component, 'context', { value: contextSchema ? readOnlyContextSchema.cast(this.componentContext) : null });
-      Object.defineProperty(this.component, 'state', { value: this.state });
+      Object.defineProperty(this.component, 'state', {
+        get: () => state && state.value,
+        set: nextState => {
+          if (!state) {
+            throw new Error('State types must be specified to use the state.');
+          }
+          state.value = nextState;
+        },
+      });
       Object.defineProperty(this.component, 'setState', { value: setState });
       Object.defineProperty(this.component, 'suspend', { value: ::Autorun.suspend });
       Object.defineProperty(this.component, 'resume', { value: ::Autorun.resume });

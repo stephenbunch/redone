@@ -7,7 +7,7 @@ import { mount } from 'enzyme';
 import { number, func } from './types';
 import connect from './connect';
 
-it('props should be read-only', () => {
+it('the props should be read-only', () => {
   const ctor = jest.fn(function ctor() {
     expect(this.props.foo).toBe(2);
     expect(() => {
@@ -134,7 +134,7 @@ describe('setState', () => {
   });
 });
 
-it('should update props', () => {
+it('should update the props', () => {
   let foo = 0;
   let bar = 0;
   let baz = 0;
@@ -320,7 +320,7 @@ it('should pass context variables', () => {
   wrapper.unmount();
 });
 
-it('context should be read-only', () => {
+it('the context should be read-only', () => {
   let called = false;
   const Foo = connect(class {
     static contextTypes = {
@@ -420,4 +420,39 @@ it('should expose the state object for easier testing', () => {
   expect(wrapper.state('value')).toBe(2);
 
   wrapper.unmount();
+});
+
+it('the state should be settable', () => {
+  const ctor = jest.fn();
+
+  const Foo = connect(class {
+    static stateTypes = {
+      value: number,
+    };
+
+    constructor() {
+      expect(this.state.value).toBe(0);
+      this.state = { value: '2' };
+      expect(this.state.value).toBe(2);
+      this.state = undefined;
+      expect(this.state.value).toBe(0);
+      ctor();
+    }
+  });
+
+  const wrapper = mount(<Foo />);
+  expect(ctor).toBeCalled();
+
+  wrapper.unmount();
+});
+
+it('setting the state should throw an error if no state types are specified', () => {
+  const Foo = connect(class {
+    constructor() {
+      this.state = { foo: 2 };
+    }
+  });
+  expect(() => {
+    mount(<Foo />);
+  }).toThrow();
 });
