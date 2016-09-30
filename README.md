@@ -36,9 +36,7 @@ An **autorun** is a runner that executes a block of code whenever **dependencies
 
 To create an autorun, you pass a callback. When the autorun is created, the callback is run immediately. During execution, dependencies are tracked by the autorun. Whenever a dependency changes, the autorun is notified and the callback is rerun.
 
-Autoruns don't return values, they set them.
-
-Once you're inside an autorun, you have access to a **computation** object. This object can be used spin off child autoruns (called **forks**) or string together multiple segments of an async computation. A fork is like a forked process. It does its own thing, but its lifecycle is attached to the parent. If the parent is cleaned up, the fork is cleaned up as well. With async computations, **continuations** are automatically skipped once a computation is rerun. This ensures that you never have an earlier async computation overwrite the results of a rerun in the event that the first run takes longer to resolve than the second.
+**Autoruns don't return values, they set them.**
 
 ### A simple example
 ```js
@@ -73,6 +71,8 @@ setColor('green');
 ```
 
 ### Forked computations
+Once you're inside an autorun, you have access to a **computation** object. This object can be used spin off child autoruns (called **forks**) or string together multiple segments of an async computation. A fork is like a forked process. It does its own thing, but its lifecycle is attached to the parent. If the parent is cleaned up, the fork is cleaned up as well.
+
 ```js
 import { Autorun, Dependency } from 'redone';
 
@@ -120,6 +120,8 @@ dep1.changed();
 ```
 
 ### Async computations
+With async computations, **continuations** are automatically skipped once a computation is rerun. This ensures that you never have an earlier async computation overwrite the results of a rerun in the event that the first run takes longer to resolve than the second.
+
 ```js
 import { Autorun, Dependency } from 'redone';
 
