@@ -478,7 +478,9 @@ it('should support the callback parameter of setState', () => {
   });
 
   const wrapper = mount(<Foo />);
-  wrapper.instance().setState({ value: 'foo' }, () => result += 'world');
+  wrapper.instance().setState({ value: 'foo' }, () => {
+    result += 'world';
+  });
   wrapper.unmount();
   expect(result).toBe('helloworld');
 });

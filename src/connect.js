@@ -55,7 +55,7 @@ export default function connect(Component, parser = defaultParser) {
           if (state) {
             state.value = nextState;
           }
-        }
+        },
       });
 
       this.component = Object.create(Component.prototype);
