@@ -194,6 +194,16 @@ Types work a bit differently in Redone than in React. In React, types are used t
 
 You can convert from Redone types to React types using `utils/getReactTypes`, but you cannot convert the other way around due to the way React types are represented.
 
+```js
+import { number } from 'redone/types';
+
+console.log(number.cast('3'));
+// 3
+
+console.log(number.cast());
+// 0
+```
+
 See the [API Reference](docs/types.md).
 
 ## `connect(class)`
