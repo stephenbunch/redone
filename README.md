@@ -149,6 +149,7 @@ dep1.changed();
 dep1.changed();
 await autorun.value;
 // "continued", 2
+// ^ this value is 2 instead of 3 because the autorun was rerun before the async call could finish
 
 dep2.changed();
 await autorun.value;
