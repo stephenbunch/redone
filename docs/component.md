@@ -10,6 +10,7 @@
 * [`render`](#render)
 * [`getChildContext`](#getchildcontext)
 * [`componentWillMount`](#componentwillmount)
+* [`componentDidMount`](#componentdidmount)
 * [`componentDidUpdate`](#componentdidupdate)
 * [`componentWillUnmount`](#componentwillunmount)
 * [`setState`](#setstate)
