@@ -75,7 +75,7 @@ setColor('green');
 ```
 
 ### Forked computations
-Once you're inside an autorun, you have access to a **computation** object. This object can be used spin off child autoruns (called **forks**) or string together multiple segments of an async computation. A fork is like a forked process. It does its own thing, but its lifecycle is attached to the parent. If the parent is cleaned up, the fork is cleaned up as well.
+Once you're inside an autorun, you have access to a **computation** object. This object can be used spin off child autoruns (called **forks**) or string together multiple segments of an async computation. A fork is like a forked process. It reruns by itself, but its lifecycle is attached to the parent. If the parent is cleaned up, the fork is cleaned up as well.
 
 ```js
 import { Autorun, Dependency } from 'redone';
