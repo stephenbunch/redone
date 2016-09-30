@@ -208,7 +208,7 @@ console.log(number.cast());
 // 0
 ```
 
-See the [API Reference](docs/types.md).
+See the [Types API Reference](docs/types.md).
 
 ## `connect(class)`
 Generates a new React Component class using the specified class as a template. For the most part, the API matches React's [ES6 API](https://facebook.github.io/react/docs/reusable-components.html#es6-classes). The differences are:
@@ -258,6 +258,8 @@ class Counter {
 
 export default connect(Counter);
 ```
+
+See the [Component API Reference](docs/component.md).
 
 [npm-image]: https://img.shields.io/npm/v/redone.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/redone
