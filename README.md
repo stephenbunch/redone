@@ -32,9 +32,13 @@
 Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state mutations as is the case with Flux and Redux, Redone focuses on providing consistent relationships between components. It does this by decoupling data providers from consumers, disallowing circular data dependencies, and enforcing contracts at runtime. Unlike most React frameworks, Redone takes an [object-oriented](https://news.ycombinator.com/item?id=1355977) approach to UX, favoring local state and mutable components over global state and immutable components which are more appropriate for functional architectures.
 
 ## Autoruns
-An **autorun** is a runner that executes a block of code whenever **dependencies** of that block change. Think of it like webpack in "watch mode" and how it rebuilds the bundle whenever an imported file changes. In this analogy, webpack is the autorun, the build is an arbitrary function, and the files are just variables in your app.
+I recommend you first read [this intro](https://en.wikipedia.org/wiki/Reactive_programming) to **reactive programming**. If you have more time, you should also watch [this talk](https://www.youtube.com/watch?v=j3Q32brCUAI) by Conal Elliot on functional reactive programming. Lastly, here's [an example](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) of reactive programming using streams.
+
+An **autorun** is a runner that executes a callback whenever **data dependencies** of that callback change. Think of it like webpack in "watch mode" and how it rebuilds the bundle whenever an imported file changes. In this analogy, webpack is the autorun, the build is the callback, and the files are just values in your app.
 
 To create an autorun, you pass a callback. When the autorun is created, the callback is run immediately. During execution, dependencies are tracked by the autorun. Whenever a dependency changes, the autorun is notified and the callback is rerun.
+
+It's important to note that the `dependency` object doesn't store any data itself. It's job is to let autoruns know when a piece of data is being depended on, and when it's time to rerun because data changed. It doesn't manage the data itself.
 
 **Autoruns don't return values, they set them.**
 
