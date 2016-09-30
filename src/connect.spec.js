@@ -4,7 +4,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { number, func } from './types';
+import { number, func, string } from './types';
 import connect from './connect';
 
 it('the props should be read-only', () => {
@@ -455,4 +455,30 @@ it('setting the state should throw an error if no state types are specified', ()
   expect(() => {
     mount(<Foo />);
   }).toThrow();
+});
+
+it('should support the callback parameter of setState', () => {
+  let result = '';
+  const Foo = connect(class {
+    static stateTypes = {
+      value: string,
+    };
+
+    componentDidUpdate() {
+      result += 'hello';
+    }
+
+    render() {
+      return (
+        <div>
+          {this.state.value}
+        </div>
+      );
+    }
+  });
+
+  const wrapper = mount(<Foo />);
+  wrapper.instance().setState({ value: 'foo' }, () => result += 'world');
+  wrapper.unmount();
+  expect(result).toBe('helloworld');
 });

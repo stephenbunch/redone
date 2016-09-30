@@ -156,8 +156,11 @@ export default function connect(Component, parser = defaultParser) {
       this.component = null;
     }
 
-    setState(state) {
+    setState(state, callback) {
       this.component.setState(state);
+      if (callback) {
+        callback();
+      }
     }
 
     render() {

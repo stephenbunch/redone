@@ -131,7 +131,7 @@ ReactDOM.render(<App />, document.body);
 ```
 
 ### `render`
-This is the famous render function where most of your presentational logic will exist. The render function must return a `string`, `null`, or a React Element. Redone wraps this inside an autorun so that the component is automatically re-rendered when changes occur. In traditional React components, `render` is called when the component receives new props or the state is changed, but since these changes are already being tracked by the autorun, Redone uses `forceUpdate` to tell React to get the latest changes once new output has been rendered. See [the docs](https://facebook.github.io/react/docs/interactivity-and-dynamic-uis.html) for more information.
+This is the famous render function where most of your presentational logic will exist. The render function must return a React Element or `null`. Redone wraps this inside an autorun so that the component is automatically re-rendered when changes occur. In traditional React components, `render` is called when the component receives new props or the state is changed, but since these changes are already being tracked by the autorun, Redone uses `forceUpdate` to tell React to get the latest changes once new output has been rendered. See [the docs](https://facebook.github.io/react/docs/interactivity-and-dynamic-uis.html) for more information.
 
 ### `getChildContext`
 React calls this function during the render process in order to pass context variables down the tree. Redone wraps this in an autorun so that changes to the computed object are automatically passed down the tree. See [the docs](https://facebook.github.io/react/docs/context.html) to learn more about how the context works.
