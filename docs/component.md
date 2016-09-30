@@ -44,7 +44,7 @@ ReactDOM.render(<Counter value="2" />, document.body);
 ```
 
 ### `static stateTypes`
-The **state types** define the shape of the **state**. The state object is read-only and cannot be replaced, but its properties can be changed. It is cast using the `ReactiveShapeSchema`, so any changes to the underlying structure are ignored. If no state types are specified, the state is set to `null`.
+The **state types** define the shape of the **state**. It is cast using the `ReactiveShapeSchema`, so any changes to the underlying structure are ignored. If no state types are specified, the state is set to `null`.
 
 ```js
 import React from 'react';
