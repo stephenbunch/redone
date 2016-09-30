@@ -162,7 +162,10 @@ await autorun.value;
 ```
 
 ### Preventing circular data dependencies
-Redone will throw an error if it detects a circular data dependency. A circular data dependency occurs when an autorun causes a value to change that it depends on. For example:
+Circular data dependencies between components create infinite loops. In large apps, they can be extremely difficult to track down because data might pass through several components before coming back around. One solution to this problem is the [Flux architecture](https://github.com/facebook/flux). With Flux, all mutations travel in the form of **actions** through a central dispatcher where circular dependencies can be squashed.
+
+With Redone, because all reactions to mutation occur within a computation, we can easily check if we're reentering a computation and throw an error. This works well for both synchronous and asynchronous reactions.
+
 ```js
 const dep = new Dependency();
 Autorun.start(() => {
@@ -171,7 +174,19 @@ Autorun.start(() => {
 });
 ```
 
-Redone can also detect circular dependencies between multiple autoruns:
+Circular dependencies in async computations:
+```js
+const dep = new Dependency();
+Autorun.start(async comp => {
+  dep.depend();
+  await Promise.resolve();
+  comp.continue(() => {
+    dep.changed(); // throws an error
+  });
+});
+```
+
+Circular dependencies between multiple autoruns:
 ```js
 const dep1 = new Dependency();
 const dep2 = new Dependency();
@@ -184,18 +199,6 @@ const auto1 Autorun.start(() => {
 const auto2 = Autorun.start(() => {
   dep2.depend();
   dep1.changed(); // causes auto1 to run again which throws an error
-});
-```
-
-Circular data dependencies are also prevented in async computations:
-```js
-const dep = new Dependency();
-Autorun.start(async comp => {
-  dep.depend();
-  await Promise.resolve();
-  comp.continue(() => {
-    dep.changed(); // throws an error
-  });
 });
 ```
 
