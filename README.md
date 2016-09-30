@@ -190,7 +190,11 @@ const auto2 = Autorun.start(() => {
 ```
 
 ## Types
-Types work a bit differently in Redone than in React. In React, types are used to assert that a property is of a certain type. In Redone, types are used to *ensure* that a given property is of the correct type. In other words, if you throw a string at a number type, the number schema will intelligently convert the string to a number rather than throwing an error. Redone focuses on allowing you to mutate a value, but not its type.
+Types work a bit differently in Redone than in React. In React, types are used to assert that a property is of a certain type. In Redone, types are used to *ensure* that a given property is of the correct type. In other words, if you throw a string at a number type, the number schema will intelligently convert the string to a number rather than throwing an error.
+
+After using [Mongoose](http://mongoosejs.com/docs/guide.html) for MongoDB development in Node, I found that it's much easier to have a framework make sure your types are correct at runtime rather than littering type checks all over your codebase or using a compile-time type checker.
+
+With Redone types, we can be confident that data entering through our props and coming from our state follow the type signatures we specified. This eliminates an entire class of bugs related to type errors. If some outside data has the wrong shape, we'll just see an empty component rather than crashing the page.
 
 You can convert from Redone types to React types using `utils/getReactTypes`, but you cannot convert the other way around due to the way React types are represented.
 
