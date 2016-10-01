@@ -94,7 +94,7 @@ export default function connect(Component, parser = defaultParser) {
         this.childContextAutorun = Autorun.start(comp => {
           this.childContext = this.component.getChildContext();
           if (!comp.isFirstRun) {
-            Autorun.never(() => {
+            Autorun.exclude(() => {
               this.forceUpdate();
             });
           }
@@ -169,7 +169,7 @@ export default function connect(Component, parser = defaultParser) {
           this.renderAutorun = Autorun.start(comp => {
             this.element = this.component.render();
             if (!comp.isFirstRun) {
-              Autorun.never(() => {
+              Autorun.exclude(() => {
                 this.forceUpdate();
               });
             }

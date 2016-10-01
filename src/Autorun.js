@@ -34,7 +34,7 @@ export default class Autorun {
     }
   }
 
-  static never(func) {
+  static exclude(func) {
     const current = currentAutorun;
     currentAutorun = null;
     const result = func();

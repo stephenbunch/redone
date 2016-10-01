@@ -278,14 +278,14 @@ it('can be suspended and resumed', () => {
   autorun.dispose();
 });
 
-describe('the never function', () => {
+describe('the exclude function', () => {
   it('should run the callback outside of any autorun', () => {
     const dep1 = new Dependency();
     const dep2 = new Dependency();
     let called = 0;
     const autorun = Autorun.start(() => {
       dep1.depend();
-      Autorun.never(() => {
+      Autorun.exclude(() => {
         dep2.depend();
       });
       called += 1;
@@ -304,7 +304,7 @@ describe('the never function', () => {
   it('should forward the return value', () => {
     let result;
     const autorun = Autorun.start(() => {
-      result = Autorun.never(() => 2);
+      result = Autorun.exclude(() => 2);
     });
     expect(result).toBe(2);
     autorun.dispose();
