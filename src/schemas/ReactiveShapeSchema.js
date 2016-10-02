@@ -1,7 +1,5 @@
 import KeyedDependency from '../KeyedDependency';
-import ShapeSchema from './ShapeSchema';
-import toObject from '../utils/toObject';
-import toJson from '../utils/toJson';
+import proxySchema from '../internals/proxySchema';
 
 function getValue(obj, key) {
   const value = obj[key];
@@ -11,7 +9,7 @@ function getValue(obj, key) {
   return value;
 }
 
-function createClass(keys) {
+export default proxySchema('ReactiveShapeSchema', keys => {
   class ReactiveShape {
     constructor(source) {
       Object.defineProperty(this, '__DEPENDENCY', {
@@ -28,14 +26,6 @@ function createClass(keys) {
         this[key] = getValue(source, key);
       }
       this.__INITIALIZED = true;
-    }
-
-    toObject() {
-      return toObject(this, Object.keys(keys));
-    }
-
-    toJSON() {
-      return toJson(this, Object.keys(keys));
     }
   }
 
@@ -56,23 +46,6 @@ function createClass(keys) {
       },
     });
   });
+
   return ReactiveShape;
-}
-
-export default class ReactiveShapeSchema extends ShapeSchema {
-  constructor(keys) {
-    super(keys);
-    this.shapeClass = createClass(keys);
-  }
-
-  cast(value) {
-    if (value === null || typeof value !== 'object') {
-      value = {};
-    }
-    if (value instanceof this.shapeClass) {
-      return value;
-    }
-    // eslint-disable-next-line new-cap
-    return new this.shapeClass(value);
-  }
-}
+});

@@ -1,21 +1,11 @@
-import ShapeSchema from './ShapeSchema';
-import toObject from '../utils/toObject';
-import toJson from '../utils/toJson';
+import proxySchema from '../internals/proxySchema';
 
-function createClass(keys) {
+export default proxySchema('ReadOnlyShapeSchema', keys => {
   class ReadOnlyShape {
     constructor(source) {
       Object.defineProperty(this, '__SOURCE', {
         value: source,
       });
-    }
-
-    toObject() {
-      return toObject(this, Object.keys(keys));
-    }
-
-    toJSON() {
-      return toJson(this, Object.keys(keys));
     }
   }
 
@@ -27,22 +17,4 @@ function createClass(keys) {
     });
   });
   return ReadOnlyShape;
-}
-
-export default class ReadOnlyShapeSchema extends ShapeSchema {
-  constructor(keys) {
-    super(keys);
-    this.shapeClass = createClass(keys);
-  }
-
-  cast(value) {
-    if (value === null || typeof value !== 'object') {
-      value = {};
-    }
-    if (value instanceof this.shapeClass) {
-      return value;
-    }
-    // eslint-disable-next-line new-cap
-    return new this.shapeClass(value);
-  }
-}
+});
