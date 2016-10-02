@@ -35,5 +35,5 @@ export default class MultiPassRenderContext {
   throwError(err) {
     this.isAlive = false;
     this.delegate.onError(err);
-  }  
+  }
 }
