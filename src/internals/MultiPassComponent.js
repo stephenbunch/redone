@@ -1,13 +1,13 @@
 import { instanceOf, nullableOf } from '../types';
-import StaticAsyncRenderContext from './StaticAsyncRenderContext';
+import MultiPassRenderContext from './MultiPassRenderContext';
 import extendStatic from './extendStatic';
 
-class StaticAsyncRenderComponent {
+class MultiPassComponent {
   static createClass(Component, schemaFactory) {
     return extendStatic(this, {
       ...schemaFactory(this),
       contextTypes: {
-        ...StaticAsyncRenderComponent.contextTypes,
+        ...this.contextTypes,
         ...Component.contextTypes,
       },
       childContextTypes: Component.childContextTypes,
@@ -16,14 +16,14 @@ class StaticAsyncRenderComponent {
   }
 
   static contextTypes = {
-    __STATIC_RENDER: nullableOf(instanceOf(StaticAsyncRenderContext)),
+    __MULTI_PASS_RENDER_CONTEXT: nullableOf(instanceOf(MultiPassRenderContext)),
   };
 
   constructor(props, context, delegate) {
     const { Component, contextSchema } = this.constructor;
     this.context = contextSchema.cast(context);
-    if (this.context.__STATIC_RENDER) {
-      this.component = this.context.__STATIC_RENDER.next(() =>
+    if (this.context.__MULTI_PASS_RENDER_CONTEXT) {
+      this.component = this.context.__MULTI_PASS_RENDER_CONTEXT.provide(() =>
         new Component(props, context, delegate)
       );
     } else {
@@ -72,4 +72,4 @@ class StaticAsyncRenderComponent {
   }
 }
 
-export default StaticAsyncRenderComponent;
+export default MultiPassComponent;

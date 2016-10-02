@@ -5,7 +5,7 @@ function nullIfUndefined(value) {
   return value;
 }
 
-export default class StaticAsyncRenderState {
+export default class LambdaComponent {
   constructor(context, componentFactory) {
     this.context = context;
     this.computeResult = undefined;
@@ -32,12 +32,13 @@ export default class StaticAsyncRenderState {
         throw err;
       }
       if (result && typeof result.then === 'function') {
-        this.context.startCompute();
+        this.context.beginTask();
         result = result.then(
           () => {
             if (this.context.isAlive) {
               this.computeFinished = true;
-              this.context.finishCompute();
+              this.context.endTask();
+              this.context = null;
             } else {
               this.dispose();
             }
@@ -45,6 +46,7 @@ export default class StaticAsyncRenderState {
           err => {
             this.dispose();
             this.context.throwError(err);
+            this.context = null;
           }
         );
       } else {
@@ -92,7 +94,12 @@ export default class StaticAsyncRenderState {
 
   componentWillMount() {
     if (this.component) {
-      this.component.componentWillMount();
+      try {
+        this.component.componentWillMount();
+      } catch (err) {
+        this.dispose();
+        throw err;
+      }
     }
   }
 

@@ -1,6 +1,6 @@
-import StaticComponent from './StaticComponent';
+import LambdaComponent from './LambdaComponent';
 
-export default class StaticAsyncRenderContext {
+export default class MultiPassRenderContext {
   constructor(delegate) {
     this.states = [];
     this.cursor = -1;
@@ -9,10 +9,10 @@ export default class StaticAsyncRenderContext {
     this.isAlive = true;
   }
 
-  next(componentFactory) {
+  provide(componentFactory) {
     this.cursor += 1;
     if (!this.states[this.cursor]) {
-      this.states[this.cursor] = new StaticComponent(this, componentFactory);
+      this.states[this.cursor] = new LambdaComponent(this, componentFactory);
     }
     return this.states[this.cursor];
   }
@@ -21,19 +21,19 @@ export default class StaticAsyncRenderContext {
     this.cursor = -1;
   }
 
-  startCompute() {
+  beginTask() {
     this.pending += 1;
+  }
+
+  endTask() {
+    this.pending -= 1;
+    if (this.pending === 0) {
+      this.delegate.next();
+    }
   }
 
   throwError(err) {
     this.isAlive = false;
-    this.delegate.didError(err);
-  }
-
-  finishCompute() {
-    this.pending -= 1;
-    if (this.pending === 0) {
-      this.delegate.didFinish();
-    }
-  }
+    this.delegate.onError(err);
+  }  
 }

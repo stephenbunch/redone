@@ -1,8 +1,8 @@
 import ReactiveComponent from './ReactiveComponent';
-import StaticAsyncRenderComponent from './StaticAsyncRenderComponent';
+import MultiPassComponent from './MultiPassComponent';
 
 export default function createClass(Component, schemaFactory) {
-  return StaticAsyncRenderComponent.createClass(
+  return MultiPassComponent.createClass(
     ReactiveComponent.createClass(Component, schemaFactory),
     schemaFactory
   );

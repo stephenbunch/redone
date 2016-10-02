@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import StaticAsyncRenderContext from './internals/StaticAsyncRenderContext';
+import MultiPassRenderContext from './internals/MultiPassRenderContext';
 
 export default function renderAsync(element, renderFunc = ReactDOMServer.renderToStaticMarkup) {
   return new Promise((resolve, reject) => {
@@ -11,26 +11,32 @@ export default function renderAsync(element, renderFunc = ReactDOMServer.renderT
       if (!rendering) {
         rendering = true;
         context.reset();
-        const result = renderFunc(React.createElement(Container, null, element));
+        let result;
+        try {
+          result = renderFunc(React.createElement(Container, null, element));
+        } catch (err) {
+          reject(err);
+          return;
+        }
         if (context.pending === 0) {
           resolve(result);
         }
         rendering = false;
       }
     };
-    const context = new StaticAsyncRenderContext({ didError: reject, didFinish: render });
+    const context = new MultiPassRenderContext({ onError: reject, next: render });
     class Container extends React.Component {
       static propTypes = {
         children: React.PropTypes.node,
       };
 
       static childContextTypes = {
-        __STATIC_RENDER: React.PropTypes.instanceOf(StaticAsyncRenderContext),
+        __MULTI_PASS_RENDER_CONTEXT: React.PropTypes.instanceOf(MultiPassRenderContext),
       };
 
       getChildContext() {
         return {
-          __STATIC_RENDER: context,
+          __MULTI_PASS_RENDER_CONTEXT: context,
         };
       }
 
