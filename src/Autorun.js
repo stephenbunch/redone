@@ -6,6 +6,23 @@ let suspendedAutoruns = [];
 const autorunStack = [];
 let uid = 0;
 
+function suspend() {
+  suspendCount += 1;
+}
+
+function resume() {
+  if (suspendCount > 0) {
+    suspendCount -= 1;
+    if (suspendCount === 0) {
+      const autoruns = suspendedAutoruns;
+      suspendedAutoruns = [];
+      for (const autorun of autoruns) {
+        autorun.rerun();
+      }
+    }
+  }
+}
+
 export default class Autorun {
   static get current() {
     return currentAutorun;
@@ -17,20 +34,21 @@ export default class Autorun {
     return autorun;
   }
 
-  static suspend() {
-    suspendCount += 1;
+  static once(func) {
+    try {
+      suspend();
+      return func();
+    } finally {
+      resume();
+    }
   }
 
-  static resume() {
-    if (suspendCount > 0) {
-      suspendCount -= 1;
-      if (suspendCount === 0) {
-        const autoruns = suspendedAutoruns;
-        suspendedAutoruns = [];
-        for (const autorun of autoruns) {
-          autorun.rerun();
-        }
-      }
+  static async onceAsync(func) {
+    try {
+      suspend();
+      return await func();
+    } finally {
+      resume();
     }
   }
 

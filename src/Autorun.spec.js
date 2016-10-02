@@ -250,32 +250,67 @@ describe('the continue function', () => {
   });
 });
 
-it('can be suspended and resumed', () => {
-  const dep1 = new Dependency();
-  const dep2 = new Dependency();
-  let called = 0;
-  const autorun = Autorun.start(() => {
-    dep1.depend();
-    dep2.depend();
-    called += 1;
+describe('the once function', () => {
+  it('should suspend reruns', () => {
+    const dep1 = new Dependency();
+    const dep2 = new Dependency();
+    let called = 0;
+    const autorun = Autorun.start(() => {
+      dep1.depend();
+      dep2.depend();
+      called += 1;
+    });
+    expect(called).toBe(1);
+
+    Autorun.once(() => {
+      Autorun.once(() => {
+        dep1.changed();
+        dep2.changed();
+        expect(called).toBe(1);
+      });
+      expect(called).toBe(1);
+    });
+
+    expect(called).toBe(2);
+
+    autorun.dispose();
   });
-  expect(called).toBe(1);
 
-  Autorun.suspend();
-  Autorun.suspend();
+  it('should forward the return value', () => {
+    expect(Autorun.once(() => 2)).toBe(2);
+  });
+});
 
-  dep1.changed();
-  dep2.changed();
+describe('the onceAsync function', () => {
+  it('should suspend reruns', async () => {
+    const dep1 = new Dependency();
+    const dep2 = new Dependency();
+    let called = 0;
+    const autorun = Autorun.start(() => {
+      dep1.depend();
+      dep2.depend();
+      called += 1;
+    });
+    expect(called).toBe(1);
 
-  expect(called).toBe(1);
+    await Autorun.onceAsync(async () => {
+      await Autorun.onceAsync(async () => {
+        dep1.changed();
+        await Promise.resolve();
+        dep2.changed();
+        expect(called).toBe(1);
+      });
+      expect(called).toBe(1);
+    });
 
-  Autorun.resume();
-  expect(called).toBe(1);
+    expect(called).toBe(2);
 
-  Autorun.resume();
-  expect(called).toBe(2);
+    autorun.dispose();
+  });
 
-  autorun.dispose();
+  it('should forward the return value', async () => {
+    expect(await Autorun.onceAsync(() => Promise.resolve(2))).toBe(2);
+  });
 });
 
 describe('the exclude function', () => {
