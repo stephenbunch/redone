@@ -4,8 +4,11 @@ import {
   ArraySchema,
   BooleanSchema,
   FunctionSchema,
+  InstanceSchema,
+  NullableSchema,
   NumberSchema,
   ObjectSchema,
+  OptionalSchema,
   ShapeSchema,
   StringSchema,
 } from '../schemas';
@@ -29,6 +32,13 @@ function transform(node) {
     return React.PropTypes.shape(keys);
   } else if (node instanceof StringSchema) {
     return React.PropTypes.string;
+  } else if (
+    node instanceof NullableSchema ||
+    node instanceof OptionalSchema
+  ) {
+    return transform(node.schema);
+  } else if (node instanceof InstanceSchema) {
+    return React.PropTypes.instanceOf(node.type);
   }
   return React.PropTypes.any;
 }
