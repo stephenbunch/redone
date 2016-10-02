@@ -1,6 +1,6 @@
 {
   "name": "redone",
-  "version": "0.3.10",
+  "version": "0.4.0",
   "description": "Predictable relationships between React components.",
   "main": "lib/index.js",
   "scripts": {
