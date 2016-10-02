@@ -13,6 +13,7 @@
     "no-underscore-dangle": "off",
     "no-unused-expressions": "off",
     "quote-props": "off",
+    "react/forbid-prop-types": "off",
     "react/no-multi-comp": "off",
     "react/prefer-stateless-function": "off",
     "react/jsx-filename-extension": "off",
