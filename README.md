@@ -13,6 +13,7 @@
   * [Preventing circular data dependencies](#preventing-circular-data-dependencies)
 * [Types](#types)
 * [`connect(class)`](#connectclass)
+* [`renderAsync(element)`](#renderasyncelement)
 
 
 ## Introduction
@@ -260,6 +261,34 @@ export default connect(Counter);
 ```
 
 See the [Component API Reference](docs/component.md).
+
+## `renderAsync(element)`
+With support for async computations, the default static render function provided by React won't work. I've added a utility method called `renderAsync` which walks the element tree multiple times until all async computations have completed.
+
+```js
+import { connect } from 'redone';
+import { renderAsync } from 'redone/server';
+import { number } from 'redone/types';
+
+const Test = connect(
+  class Test {
+    static stateTypes = {
+      value: number,
+    };
+
+    async compute() {
+      this.state.value = await Promise.resolve(2);
+    }
+
+    render() {
+      return <div>{this.state.value}</div>;
+    }
+  }
+);
+
+renderAsync(<Test />).then(result => console.log(result));
+// '<div>2</div>'
+```
 
 [npm-image]: https://img.shields.io/npm/v/redone.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/redone
