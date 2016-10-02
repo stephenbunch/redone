@@ -1,7 +1,7 @@
 /* global it expect */
 
 import React from 'react';
-import { number } from './types';
+import { number, any } from './types';
 import renderAsync from './renderAsync';
 import connect from './connect';
 import Dependency from './Dependency';
@@ -186,4 +186,49 @@ it('should recover from errors in sibling components', async () => {
   expect(dep.computations.length).toBe(2);
   expect(dep.computations[0].isAlive).toBe(false);
   expect(dep.computations[1].isAlive).toBe(false);
+});
+
+it('should only call methods once', async () => {
+  let render = 0;
+  let compute = 0;
+  const Foo = connect(class {
+    static propTypes = {
+      children: any,
+    };
+
+    static stateTypes = {
+      value: number,
+    };
+
+    async compute() {
+      compute += 1;
+      this.state.value = await Promise.resolve(2);
+    }
+
+    render() {
+      render += 1;
+      return (
+        <div>
+          {this.state.value}
+          {this.props.children}
+        </div>
+      );
+    }
+  });
+  const result = await renderAsync(
+    <div data-thing>
+      <Foo>
+        <Foo />
+        <Foo>
+          <div data-thing>
+            <Foo />
+          </div>
+        </Foo>
+        <Foo />
+      </Foo>
+    </div>
+  );
+  expect(render).toBe(5);
+  expect(compute).toBe(5);
+  expect(result).toBe('<div data-thing="true"><div>2<div>2</div><div>2<div data-thing="true"><div>2</div></div></div><div>2</div></div></div>');
 });
