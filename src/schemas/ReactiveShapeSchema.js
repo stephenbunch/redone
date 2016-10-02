@@ -1,5 +1,5 @@
 import KeyedDependency from '../KeyedDependency';
-import proxySchema from '../internals/proxySchema';
+import { createClass } from '../internals/ProxySchema';
 
 function getValue(obj, key) {
   const value = obj[key];
@@ -9,7 +9,7 @@ function getValue(obj, key) {
   return value;
 }
 
-export default proxySchema('ReactiveShapeSchema', keys => {
+export default createClass('ReactiveShapeSchema', keys => {
   class ReactiveShape {
     constructor(source) {
       Object.defineProperty(this, '__DEPENDENCY', {

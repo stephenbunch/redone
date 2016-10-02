@@ -1,6 +1,6 @@
-import proxySchema from '../internals/proxySchema';
+import { createClass } from '../internals/ProxySchema';
 
-export default proxySchema('ReadOnlyShapeSchema', keys => {
+export default createClass('ReadOnlyShapeSchema', keys => {
   class ReadOnlyShape {
     constructor(source) {
       Object.defineProperty(this, '__SOURCE', {

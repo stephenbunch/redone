@@ -1,9 +1,8 @@
 import React from 'react';
 
 import getReactTypes from './utils/getReactTypes';
-import provideReactFacade from './internals/provideReactFacade';
 import setClassName from './internals/setClassName';
-import transformClass from './internals/transformClass';
+import createClass from './internals/createClass';
 import defaultSchemaFactory from './internals/defaultSchemaFactory';
 
 export default function connect(Class, schemaFactory = defaultSchemaFactory) {
@@ -21,7 +20,7 @@ export default function connect(Class, schemaFactory = defaultSchemaFactory) {
   delete statics.contextTypes;
   delete statics.childContextTypes;
 
-  const Component = transformClass(Class, schemaFactory);
+  const Component = createClass(Class, schemaFactory);
   const { contextTypes, childContextTypes } = Component;
 
   class ReactComponent extends React.Component {
@@ -35,34 +34,57 @@ export default function connect(Class, schemaFactory = defaultSchemaFactory) {
     }
 
     get state() {
-      if (this.component) {
-        const instance = this.component.getInstance();
-        if (instance) {
-          return instance.state;
-        }
+      const instance = this.component.instance();
+      if (instance) {
+        return instance.state;
       }
       return null;
     }
 
-    // eslint-disable-next-line no-unused-vars
     set state(nextState) {
-      // Don't set state from the outside like this.
+      const instance = this.component.instance();
+      if (instance) {
+        instance.state = nextState;
+      }
+    }
+
+    getChildContext() {
+      return this.component.getChildContext();
+    }
+
+    componentWillMount() {
+      this.component.componentWillMount();
+    }
+
+    componentDidMount() {
+      this.component.componentDidMount();
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+      this.component.componentWillReceiveProps(nextProps, nextContext);
     }
 
     shouldComponentUpdate() {
       return false;
     }
 
+    componentDidUpdate() {
+      this.component.componentDidUpdate();
+    }
+
     componentWillUnmount() {
-      if (this.component) {
-        this.component.componentWillUnmount();
-        this.component.dispose();
-        this.component = null;
-      }
+      this.component.componentWillUnmount();
+    }
+
+    setState(nextState, callback) {
+      this.component.setState(nextState, callback);
+    }
+
+    render() {
+      return this.component.render();
     }
   }
 
-  provideReactFacade(ReactComponent);
   setClassName(ReactComponent, Class.name);
   Object.assign(ReactComponent, statics);
   return ReactComponent;

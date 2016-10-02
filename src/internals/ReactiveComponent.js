@@ -1,5 +1,5 @@
 import Autorun from '../Autorun';
-import extendClass from './extendClass';
+import extendStatic from './extendStatic';
 
 function isFunc(prop) {
   return typeof prop === 'function';
@@ -12,7 +12,16 @@ function setState(state, callback) {
   }
 }
 
-class ReactiveComponent {
+export default class ReactiveComponent {
+  static createClass(Component, schemaFactory) {
+    return extendStatic(this, {
+      ...schemaFactory(Component),
+      Component,
+      contextTypes: Component.contextTypes,
+      childContextTypes: Component.childContextTypes,
+    });
+  }
+
   constructor(props, context, delegate) {
     this.delegate = delegate;
 
@@ -40,6 +49,9 @@ class ReactiveComponent {
       get: () => this.state && this.state.value,
       set: nextState => {
         if (this.state === null) {
+          if (nextState === null) {
+            return;
+          }
           throw new Error('State types must be specified to use the state.');
         }
         this.state.value = nextState;
@@ -57,7 +69,7 @@ class ReactiveComponent {
     this.computeAutorun = null;
   }
 
-  getInstance() {
+  instance() {
     return this.component;
   }
 
@@ -120,6 +132,7 @@ class ReactiveComponent {
     if (isFunc(this.component.componentWillUnmount)) {
       this.component.componentWillUnmount();
     }
+    this.dispose();
   }
 
   setState(state, callback) {
@@ -161,13 +174,4 @@ class ReactiveComponent {
     this.context = null;
     this.state = null;
   }
-}
-
-export default function reactiveComponentClass(Component, schemaFactory) {
-  return extendClass(ReactiveComponent, {
-    ...schemaFactory(Component),
-    Component,
-    contextTypes: Component.contextTypes,
-    childContextTypes: Component.childContextTypes,
-  });
 }

@@ -1,31 +1,40 @@
+/* eslint-disable import/prefer-default-export */
+
 import setClassName from './setClassName';
 import ShapeSchema from '../schemas/ShapeSchema';
-import provideMethod from './provideMethod';
 import toObject from '../utils/toObject';
 import toJson from '../utils/toJson';
 
-export default function createProxySchema(name, classFactory) {
+function defineMethod(Class, name, func) {
+  Object.defineProperty(Class.prototype, name, {
+    configurable: true,
+    writable: true,
+    value: func,
+  });
+}
+
+export function createClass(name, proxyClassFactory) {
   class ProxySchema extends ShapeSchema {
     constructor(keys) {
       super(keys);
-      this.proxyClass = classFactory(keys);
-      provideMethod(this.proxyClass, 'toObject', function _() {
+      this.Proxy = proxyClassFactory(keys);
+      defineMethod(this.Proxy, 'toObject', function _() {
         return toObject(this, Object.keys(keys));
       });
-      provideMethod(this.proxyClass, 'toJSON', function _() {
+      defineMethod(this.Proxy, 'toJSON', function _() {
         return toJson(this, Object.keys(keys));
       });
     }
 
     cast(value) {
+      const { Proxy } = this;
       if (value === null || typeof value !== 'object') {
         value = {};
       }
-      if (value instanceof this.proxyClass) {
+      if (value instanceof Proxy) {
         return value;
       }
-      // eslint-disable-next-line new-cap
-      return new this.proxyClass(value);
+      return new Proxy(value);
     }
   }
   setClassName(ProxySchema, name);
