@@ -2,19 +2,19 @@ import Dependency from './Dependency';
 
 export default class KeyedDependency {
   constructor() {
-    this.dependents = {};
+    this.dependencies = {};
   }
 
   depend(key) {
-    if (!this.dependents[key]) {
-      this.dependents[key] = new Dependency();
+    if (!this.dependencies[key]) {
+      this.dependencies[key] = new Dependency();
     }
-    this.dependents[key].depend();
+    this.dependencies[key].depend();
   }
 
   changed(key) {
-    if (this.dependents[key]) {
-      this.dependents[key].changed();
+    if (this.dependencies[key]) {
+      this.dependencies[key].changed();
     }
   }
 }

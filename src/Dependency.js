@@ -2,21 +2,21 @@ import Autorun from './Autorun';
 
 export default class Dependency {
   constructor() {
-    this.dependents = [];
+    this.computations = [];
   }
 
   depend() {
     if (Autorun.current && Autorun.current.isAlive) {
-      if (this.dependents.indexOf(Autorun.current.computation) === -1) {
-        this.dependents.push(Autorun.current.computation);
+      if (this.computations.indexOf(Autorun.current.computation) === -1) {
+        this.computations.push(Autorun.current.computation);
       }
     }
   }
 
   changed() {
-    const deps = this.dependents;
-    this.dependents = [];
-    for (const computation of deps) {
+    const computations = this.computations;
+    this.computations = [];
+    for (const computation of computations) {
       if (computation.isAlive) {
         if (
           computation.autorun === Autorun.current ||

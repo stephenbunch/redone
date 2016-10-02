@@ -4,6 +4,7 @@ import React from 'react';
 import { number } from './types';
 import renderAsync from './renderAsync';
 import connect from './connect';
+import Dependency from './Dependency';
 
 it('should render components with async computes', async () => {
   const Foo = connect(class {
@@ -41,4 +42,148 @@ it('should render components with async computes', async () => {
 
   const string = await renderAsync(<Bar />);
   expect(string).toBe('<div>2<div>3</div></div>');
+});
+
+it('should recover from errors in compute', async () => {
+  const dep = new Dependency();
+  const error = new Error('test');
+  const Foo = connect(class {
+    compute() {
+      dep.depend();
+      throw error;
+    }
+  });
+  let errorResult;
+  try {
+    await renderAsync(<Foo />);
+  } catch (err) {
+    errorResult = err;
+  }
+  expect(errorResult).toBe(error);
+  expect(dep.computations.length).toBe(1);
+  expect(dep.computations[0].isAlive).toBe(false);
+});
+
+it('should recover from async errors in compute', async () => {
+  const dep = new Dependency();
+  const error = new Error('test');
+  const Foo = connect(class {
+    async compute(comp) {
+      await Promise.resolve();
+      comp.continue(() => {
+        dep.depend();
+        throw error;
+      });
+    }
+  });
+  let errorResult;
+  try {
+    await renderAsync(<Foo />);
+  } catch (err) {
+    errorResult = err;
+  }
+  expect(errorResult).toBe(error);
+  expect(dep.computations.length).toBe(1);
+  expect(dep.computations[0].isAlive).toBe(false);
+});
+
+it('should recover from errors in render', async () => {
+  const dep = new Dependency();
+  const error = new Error('test');
+  const Foo = connect(class {
+    render() {
+      dep.depend();
+      throw error;
+    }
+  });
+  let errorResult;
+  try {
+    await renderAsync(<Foo />);
+  } catch (err) {
+    errorResult = err;
+  }
+  expect(errorResult).toBe(error);
+  expect(dep.computations.length).toBe(1);
+  expect(dep.computations[0].isAlive).toBe(false);
+});
+
+it('should recover from errors in getChildContext', async () => {
+  const dep1 = new Dependency();
+  const dep2 = new Dependency();
+  const dep3 = new Dependency();
+  const error = new Error('test');
+  const Foo = connect(class {
+    compute() {
+      dep1.depend();
+    }
+    render() {
+      dep2.depend();
+    }
+    getChildContext() {
+      dep3.depend();
+      throw error;
+    }
+  });
+  let errorResult;
+  try {
+    await renderAsync(<Foo />);
+  } catch (err) {
+    errorResult = err;
+  }
+  expect(errorResult).toBe(error);
+  expect(dep1.computations.length).toBe(1);
+  expect(dep1.computations[0].isAlive).toBe(false);
+  expect(dep2.computations.length).toBe(1);
+  expect(dep2.computations[0].isAlive).toBe(false);
+  expect(dep3.computations.length).toBe(1);
+  expect(dep3.computations[0].isAlive).toBe(false);
+});
+
+it('should recover from errors in componentWillMount', async () => {
+  const error = new Error('test');
+  const Foo = connect(class {
+    componentWillMount() {
+      throw error;
+    }
+  });
+  let errorResult;
+  try {
+    await renderAsync(<Foo />);
+  } catch (err) {
+    errorResult = err;
+  }
+  expect(errorResult).toBe(error);
+});
+
+it('should recover from errors in sibling components', async () => {
+  const dep = new Dependency();
+  const error = new Error('test');
+  const Foo = connect(class {
+    async compute() {
+      dep.depend();
+      await Promise.resolve();
+      throw error;
+    }
+  });
+  const Bar = connect(class {
+    async compute() {
+      dep.depend();
+      await Promise.resolve();
+    }
+  });
+  let errorResult;
+  try {
+    await renderAsync(
+      <div>
+        <Foo />
+        <Bar />
+      </div>
+    );
+  } catch (err) {
+    errorResult = err;
+  }
+  expect(errorResult).toBe(error);
+  expect(dep.computations.length).toBe(2);
+  expect(dep.computations[0].isAlive).toBe(false);
+  expect(dep.computations[1].isAlive).toBe(false);
 });
