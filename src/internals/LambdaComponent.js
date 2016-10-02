@@ -45,7 +45,7 @@ export default class LambdaComponent {
           },
           err => {
             this.dispose();
-            this.context.throwError(err);
+            this.context.taskError(err);
             this.context = null;
           }
         );

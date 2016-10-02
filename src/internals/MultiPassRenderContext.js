@@ -32,7 +32,7 @@ export default class MultiPassRenderContext {
     }
   }
 
-  throwError(err) {
+  taskError(err) {
     this.isAlive = false;
     this.delegate.onError(err);
   }
