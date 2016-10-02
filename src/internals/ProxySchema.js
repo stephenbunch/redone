@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 import setClassName from './setClassName';
 import ShapeSchema from '../schemas/ShapeSchema';
 import toObject from '../utils/toObject';

@@ -2,7 +2,7 @@ import React from 'react';
 
 import getReactTypes from './utils/getReactTypes';
 import setClassName from './internals/setClassName';
-import createClass from './internals/createClass';
+import createProxy from './internals/createProxy';
 import defaultSchemaFactory from './internals/defaultSchemaFactory';
 
 export default function connect(Class, schemaFactory = defaultSchemaFactory) {
@@ -20,8 +20,8 @@ export default function connect(Class, schemaFactory = defaultSchemaFactory) {
   delete statics.contextTypes;
   delete statics.childContextTypes;
 
-  const Component = createClass(Class, schemaFactory);
-  const { contextTypes, childContextTypes } = Component;
+  const proxy = createProxy(Class, schemaFactory);
+  const { contextTypes, childContextTypes, Component } = proxy;
 
   class ReactComponent extends React.Component {
     static contextTypes = contextTypes && getReactTypes(contextTypes);
