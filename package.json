@@ -6,7 +6,7 @@
   "scripts": {
     "prepublish": "npm run eslint && npm run build && npm run bundle",
     "build": "rm -rf lib && babel src --out-dir lib",
-    "bundle": "rm -rf dist && webpack",
+    "bundle": "rm -rf bundles && webpack",
     "test": "jest",
     "eslint": "eslint src/**"
   },
