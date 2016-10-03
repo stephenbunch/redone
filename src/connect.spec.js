@@ -484,3 +484,16 @@ it('should support the callback parameter of setState', () => {
   wrapper.unmount();
   expect(result).toBe('helloworld');
 });
+
+it('should fire the dispose method when unmounting', () => {
+  let called = false;
+  const Foo = connect(class {
+    dispose() {
+      called = true;
+    }
+  });
+
+  const wrapper = mount(<Foo />);
+  wrapper.unmount();
+  expect(called).toBe(true);
+});
