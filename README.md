@@ -18,9 +18,7 @@
 
 
 ## Introduction
-Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state mutations as is the case with Flux and Redux, Redone focuses on providing consistent relationships between components.
-
-It does this by:
+Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state mutations as is the case with Flux and Redux, Redone focuses on providing consistent relationships between components. It does this by:
 * decoupling data providers from consumers
 * disallowing circular data dependencies
 * enforcing data schemas at runtime
