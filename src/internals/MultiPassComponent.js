@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 import { instanceOf, nullableOf } from '../types';
 import MultiPassRenderContext from './MultiPassRenderContext';
 
@@ -9,52 +11,52 @@ export function createProxy(Component) {
   class MultiPassComponent {
     constructor(props, context, delegate) {
       if (context.__MULTI_PASS_RENDER_CONTEXT) {
-        this.component = context.__MULTI_PASS_RENDER_CONTEXT.provide(() =>
+        this._component = context.__MULTI_PASS_RENDER_CONTEXT.provide(() =>
           new Component(props, context, delegate)
         );
       } else {
-        this.component = new Component(props, context, delegate);
+        this._component = new Component(props, context, delegate);
       }
     }
 
     instance() {
-      return this.component.instance();
+      return this._component.instance();
     }
 
     compute() {
-      return this.component.compute();
+      return this._component.compute();
     }
 
     getChildContext() {
-      return this.component.getChildContext();
+      return this._component.getChildContext();
     }
 
     componentWillMount() {
-      this.component.componentWillMount();
+      this._component.componentWillMount();
     }
 
     componentDidMount() {
-      this.component.componentDidMount();
+      this._component.componentDidMount();
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-      this.component.componentWillReceiveProps(nextProps, nextContext);
+      this._component.componentWillReceiveProps(nextProps, nextContext);
     }
 
     componentDidUpdate() {
-      this.component.componentDidUpdate();
+      this._component.componentDidUpdate();
     }
 
     componentWillUnmount() {
-      this.component.componentWillUnmount();
+      this._component.componentWillUnmount();
     }
 
     setState(nextState, callback) {
-      this.component.setState(nextState, callback);
+      this._component.setState(nextState, callback);
     }
 
     render() {
-      return this.component.render();
+      return this._component.render();
     }
   }
 

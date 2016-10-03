@@ -25,7 +25,7 @@ it('should return the react types', () => {
 
 it('arrayOf should return arrayOf react type', () => {
   /* eslint-disable no-console */
-  const _error = console.error;
+  const errorFunc = console.error;
   console.error = jest.fn();
   class Foo extends React.Component {
     static propTypes = getReactTypes({
@@ -42,13 +42,13 @@ it('arrayOf should return arrayOf react type', () => {
   wrapper2.unmount();
   expect(console.error.mock.calls.length).toBe(1);
   expect(console.error.mock.calls[0][0]).toMatch(/Failed prop type/);
-  console.error = _error;
+  console.error = errorFunc;
   /* eslint-enable no-console */
 });
 
 it('shape should return shape of react types', () => {
   /* eslint-disable no-console */
-  const _error = console.error;
+  const errorFunc = console.error;
   console.error = jest.fn();
   class Foo extends React.Component {
     static propTypes = getReactTypes({
@@ -67,6 +67,6 @@ it('shape should return shape of react types', () => {
   wrapper2.unmount();
   expect(console.error.mock.calls.length).toBe(1);
   expect(console.error.mock.calls[0][0]).toMatch(/Failed prop type/);
-  console.error = _error;
+  console.error = errorFunc;
   /* eslint-enable no-console */
 });

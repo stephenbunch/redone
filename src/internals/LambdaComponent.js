@@ -7,95 +7,95 @@ function nullIfUndefined(value) {
 
 export default class LambdaComponent {
   constructor(context, componentFactory) {
-    this.context = context;
-    this.computeResult = undefined;
-    this.childContext = undefined;
-    this.renderResult = undefined;
-    this.computeFinished = false;
-    this.component = componentFactory();
+    this._context = context;
+    this._computeResult = undefined;
+    this._childContext = undefined;
+    this._renderResult = undefined;
+    this._computeFinished = false;
+    this._component = componentFactory();
   }
 
   instance() {
-    if (this.component) {
-      return this.component.instance();
+    if (this._component) {
+      return this._component.instance();
     }
     return null;
   }
 
   compute() {
-    if (this.computeResult === undefined) {
+    if (this._computeResult === undefined) {
       let result;
       try {
-        result = this.component.compute();
+        result = this._component.compute();
       } catch (err) {
         this.dispose();
         throw err;
       }
       if (result && typeof result.then === 'function') {
-        this.context.beginTask();
+        this._context.beginTask();
         result = result.then(
           () => {
-            if (this.context.isAlive) {
-              this.computeFinished = true;
-              this.context.endTask();
-              this.context = null;
+            if (this._context.isAlive) {
+              this._computeFinished = true;
+              this._context.endTask();
+              this._context = null;
             } else {
               this.dispose();
             }
           },
           err => {
             this.dispose();
-            this.context.taskError(err);
-            this.context = null;
+            this._context.taskError(err);
+            this._context = null;
           }
         );
       } else {
-        this.computeFinished = true;
+        this._computeFinished = true;
       }
-      this.computeResult = nullIfUndefined(result);
+      this._computeResult = nullIfUndefined(result);
     }
-    return this.computeResult;
+    return this._computeResult;
   }
 
   getChildContext() {
-    if (this.computeFinished) {
-      if (this.childContext === undefined) {
+    if (this._computeFinished) {
+      if (this._childContext === undefined) {
         let result;
         try {
-          result = this.component.getChildContext();
+          result = this._component.getChildContext();
         } catch (err) {
           this.dispose();
           throw err;
         }
-        this.childContext = nullIfUndefined(result);
+        this._childContext = nullIfUndefined(result);
         this.dispose();
       }
-      return this.childContext;
+      return this._childContext;
     }
     return null;
   }
 
   render() {
-    if (this.computeFinished) {
-      if (this.renderResult === undefined) {
+    if (this._computeFinished) {
+      if (this._renderResult === undefined) {
         let result;
         try {
-          result = this.component.render();
+          result = this._component.render();
         } catch (err) {
           this.dispose();
           throw err;
         }
-        this.renderResult = nullIfUndefined(result);
+        this._renderResult = nullIfUndefined(result);
       }
-      return this.renderResult;
+      return this._renderResult;
     }
     return null;
   }
 
   componentWillMount() {
-    if (this.component) {
+    if (this._component) {
       try {
-        this.component.componentWillMount();
+        this._component.componentWillMount();
       } catch (err) {
         this.dispose();
         throw err;
@@ -104,7 +104,7 @@ export default class LambdaComponent {
   }
 
   dispose() {
-    this.component.dispose();
-    this.component = null;
+    this._component.dispose();
+    this._component = null;
   }
 }

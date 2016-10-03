@@ -18,7 +18,7 @@ export default function renderAsync(element, renderFunc = ReactDOMServer.renderT
           reject(err);
           return;
         }
-        if (context.pending === 0) {
+        if (!context.pending) {
           resolve(result);
         }
         rendering = false;

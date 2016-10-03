@@ -2,38 +2,46 @@ import LambdaComponent from './LambdaComponent';
 
 export default class MultiPassRenderContext {
   constructor(delegate) {
-    this.states = [];
-    this.cursor = -1;
-    this.pending = 0;
-    this.delegate = delegate;
-    this.isAlive = true;
+    this._states = [];
+    this._cursor = -1;
+    this._pending = 0;
+    this._delegate = delegate;
+    this._isAlive = true;
+  }
+
+  get pending() {
+    return this._pending > 0;
+  }
+
+  get isAlive() {
+    return this._isAlive;
   }
 
   provide(componentFactory) {
-    this.cursor += 1;
-    if (!this.states[this.cursor]) {
-      this.states[this.cursor] = new LambdaComponent(this, componentFactory);
+    this._cursor += 1;
+    if (!this._states[this._cursor]) {
+      this._states[this._cursor] = new LambdaComponent(this, componentFactory);
     }
-    return this.states[this.cursor];
+    return this._states[this._cursor];
   }
 
   reset() {
-    this.cursor = -1;
+    this._cursor = -1;
   }
 
   beginTask() {
-    this.pending += 1;
+    this._pending += 1;
   }
 
   endTask() {
-    this.pending -= 1;
-    if (this.pending === 0) {
-      this.delegate.next();
+    this._pending -= 1;
+    if (this._pending === 0) {
+      this._delegate.next();
     }
   }
 
   taskError(err) {
-    this.isAlive = false;
-    this.delegate.onError(err);
+    this._isAlive = false;
+    this._delegate.onError(err);
   }
 }

@@ -22,147 +22,147 @@ export function createProxy(Component, schemaFactory) {
 
   class ReactiveComponent {
     constructor(props, context, delegate) {
-      this.delegate = delegate;
+      this._delegate = delegate;
 
-      this.props = propsSchema ? propsSchema.cast(props) : null;
-      this.context = contextSchema ? contextSchema.cast(context) : null;
-      this.state = stateSchema ? stateSchema.cast() : null;
+      this._props = propsSchema ? propsSchema.cast(props) : null;
+      this._context = contextSchema ? contextSchema.cast(context) : null;
+      this._state = stateSchema ? stateSchema.cast() : null;
 
-      this.component = Object.create(Component.prototype);
-      Object.defineProperty(this.component, 'props', {
-        value: propsSchema ? publicPropsSchema.cast(this.props) : null,
+      this._component = Object.create(Component.prototype);
+      Object.defineProperty(this._component, 'props', {
+        value: propsSchema ? publicPropsSchema.cast(this._props) : null,
       });
-      Object.defineProperty(this.component, 'context', {
-        value: contextSchema ? publicContextSchema.cast(this.context) : null,
+      Object.defineProperty(this._component, 'context', {
+        value: contextSchema ? publicContextSchema.cast(this._context) : null,
       });
-      Object.defineProperty(this.component, 'state', {
-        get: () => this.state && this.state.value,
+      Object.defineProperty(this._component, 'state', {
+        get: () => this._state && this._state.value,
         set: nextState => {
-          if (this.state === null) {
+          if (this._state === null) {
             if (nextState === null) {
               return;
             }
             throw new Error('State types must be specified to use the state.');
           }
-          this.state.value = nextState;
+          this._state.value = nextState;
         },
       });
-      Object.defineProperty(this.component, 'setState', {
+      Object.defineProperty(this._component, 'setState', {
         value: setState,
       });
-      Component.call(this.component, this.component.props, this.component.context);
+      Component.call(this._component, this._component.props, this._component.context);
 
-      this.renderAutorun = null;
-      this.element = null;
-      this.childContextAutorun = null;
-      this.childContext = null;
-      this.computeAutorun = null;
+      this._renderAutorun = null;
+      this._element = null;
+      this._childContextAutorun = null;
+      this._childContext = null;
+      this._computeAutorun = null;
     }
 
     instance() {
-      return this.component;
+      return this._component;
     }
 
     compute() {
-      if (isFunc(this.component.compute)) {
-        if (this.computeAutorun === null) {
-          this.computeAutorun = Autorun.start(comp =>
-            this.component.compute(comp)
+      if (isFunc(this._component.compute)) {
+        if (this._computeAutorun === null) {
+          this._computeAutorun = Autorun.start(comp =>
+            this._component.compute(comp)
           );
         }
-        return this.computeAutorun.value;
+        return this._computeAutorun.value;
       }
       return undefined;
     }
 
     getChildContext() {
-      if (isFunc(this.component.getChildContext)) {
-        this.childContextAutorun = Autorun.start(comp => {
-          this.childContext = this.component.getChildContext();
+      if (isFunc(this._component.getChildContext)) {
+        this._childContextAutorun = Autorun.start(comp => {
+          this._childContext = this._component.getChildContext();
           if (!comp.isFirstRun) {
             Autorun.exclude(() => {
-              this.delegate.forceUpdate();
+              this._delegate.forceUpdate();
             });
           }
         });
       }
-      return this.childContext;
+      return this._childContext;
     }
 
     componentWillMount() {
-      if (isFunc(this.component.componentWillMount)) {
-        this.component.componentWillMount();
+      if (isFunc(this._component.componentWillMount)) {
+        this._component.componentWillMount();
       }
     }
 
     componentDidMount() {
-      if (isFunc(this.component.componentDidMount)) {
-        this.component.componentDidMount();
+      if (isFunc(this._component.componentDidMount)) {
+        this._component.componentDidMount();
       }
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
       Autorun.once(() => {
-        if (this.props) {
-          Object.assign(this.props, nextProps);
+        if (this._props) {
+          Object.assign(this._props, nextProps);
         }
-        if (this.context) {
-          Object.assign(this.context, nextContext);
+        if (this._context) {
+          Object.assign(this._context, nextContext);
         }
       });
     }
 
     componentDidUpdate() {
-      if (isFunc(this.component.componentDidUpdate)) {
-        this.component.componentDidUpdate();
+      if (isFunc(this._component.componentDidUpdate)) {
+        this._component.componentDidUpdate();
       }
     }
 
     componentWillUnmount() {
-      if (isFunc(this.component.componentWillUnmount)) {
-        this.component.componentWillUnmount();
+      if (isFunc(this._component.componentWillUnmount)) {
+        this._component.componentWillUnmount();
       }
       this.dispose();
     }
 
     setState(state, callback) {
-      this.component.setState(state, callback);
+      this._component.setState(state, callback);
     }
 
     render() {
-      if (isFunc(this.component.render)) {
-        if (this.renderAutorun === null) {
-          this.renderAutorun = Autorun.start(comp => {
-            this.element = this.component.render();
+      if (isFunc(this._component.render)) {
+        if (this._renderAutorun === null) {
+          this._renderAutorun = Autorun.start(comp => {
+            this._element = this._component.render();
             if (!comp.isFirstRun) {
               Autorun.exclude(() => {
-                this.delegate.forceUpdate();
+                this._delegate.forceUpdate();
               });
             }
           });
         }
       }
-      return this.element;
+      return this._element;
     }
 
     dispose() {
-      if (this.renderAutorun) {
-        this.renderAutorun.dispose();
-        this.renderAutorun = null;
+      if (this._renderAutorun) {
+        this._renderAutorun.dispose();
+        this._renderAutorun = null;
       }
-      if (this.computeAutorun) {
-        this.computeAutorun.dispose();
-        this.computeAutorun = null;
+      if (this._computeAutorun) {
+        this._computeAutorun.dispose();
+        this._computeAutorun = null;
       }
-      if (this.childContextAutorun) {
-        this.childContextAutorun.dispose();
-        this.childContextAutorun = null;
+      if (this._childContextAutorun) {
+        this._childContextAutorun.dispose();
+        this._childContextAutorun = null;
       }
-      this.element = null;
-      this.component = null;
-      this.props = null;
-      this.context = null;
-      this.state = null;
+      this._element = null;
+      this._component = null;
+      this._props = null;
+      this._context = null;
+      this._state = null;
     }
   }
 

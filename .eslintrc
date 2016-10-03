@@ -10,7 +10,7 @@
     "no-param-reassign": "off",
     "no-plusplus": "off",
     "no-shadow": "off",
-    "no-underscore-dangle": "off",
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
     "no-unused-expressions": "off",
     "quote-props": "off",
     "react/forbid-prop-types": "off",
