@@ -23,7 +23,7 @@ Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/
 * disallowing circular data dependencies
 * enforcing data schemas at runtime
 
-Unlike most React frameworks, Redone takes an [object-oriented](https://news.ycombinator.com/item?id=1355977) approach to UX, favoring local state and mutable components over global state and immutable components.
+Unlike many React frameworks, Redone takes an [object-oriented](https://news.ycombinator.com/item?id=1355977) approach to UX, favoring local state and mutable components over global state and immutable components.
 
 See this [StackExchange answer](http://programmers.stackexchange.com/questions/151733/if-immutable-objects-are-good-why-do-people-keep-creating-mutable-objects/151735#151735) on why mutability makes more sense.
 
