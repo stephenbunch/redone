@@ -25,7 +25,7 @@ See this [StackExchange answer](http://programmers.stackexchange.com/questions/1
 ## Autoruns
 I recommend you first read [this intro](https://en.wikipedia.org/wiki/Reactive_programming) to **reactive programming**. If you have more time, you should also watch [this talk](https://www.youtube.com/watch?v=j3Q32brCUAI) by Conal Elliot on functional reactive programming. Lastly, here's [an intro](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) to reactive programming using streams.
 
-An **autorun** is a runner that executes a callback whenever **data dependencies** of that callback change. Think of it like webpack in "watch mode" and how it rebuilds the bundle whenever an imported file changes. In this analogy, webpack is the autorun, the build is the callback, and the files are just values in your app.
+An **autorun** is a runner that executes a callback whenever **data dependencies** of that callback change. Think of it like Webpack in "watch mode". Whenever an imported file changes, Webpack automatically rebuilds the bundle. In this analogy, the autorun is Webpack, the callback is the build process, and the data dependencies are the files.
 
 To create an autorun, you pass a callback. When the autorun is created, the callback is run immediately. During execution, dependencies are tracked by the autorun. Whenever a dependency changes, the autorun is notified and the callback is rerun.
 
