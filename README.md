@@ -11,9 +11,9 @@
   * [Forked computations](#forked-computations)
   * [Async computations](#async-computations)
   * [Preventing circular data dependencies](#preventing-circular-data-dependencies)
-* [Types](#types)
+* [Types](#types) (See the [full API reference](docs/types.md))
 * [Reactive shapes](#reactive-shapes)
-* [`connect(class)`](#connectclass)
+* [`connect(class)`](#connectclass) (See the [Component API reference](docs/component.md))
 * [`renderAsync(element)`](#renderasyncelement)
 
 
@@ -212,8 +212,6 @@ console.log(number.cast());
 // 0
 ```
 
-See the [Types API Reference](docs/types.md).
-
 ## Reactive shapes
 **Reactive shapes** combine the power of Redone types and [properties](https://en.wikipedia.org/wiki/Property_(programming)) to create **indestructible** objects that hook into the Autorun system. In Redone components, the `props`, `state`, and `context` are all reactive shapes.
 
@@ -334,8 +332,6 @@ class Counter {
 
 export default connect(Counter);
 ```
-
-See the [Component API Reference](docs/component.md).
 
 ## `renderAsync(element)`
 With support for async computations, the default static render function provided by React isn't enough. Redone provides a utility method called `renderAsync` which walks the element tree multiple times until all async computations have completed.
