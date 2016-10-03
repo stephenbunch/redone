@@ -5,9 +5,9 @@ import webpack from 'webpack';
 module.exports = {
   entry: `${__dirname}/src/index`,
   output: {
-    path: `${__dirname}/dist`,
+    path: `${__dirname}/bundles`,
     filename: 'redone.js',
-    library: 'redone',
+    library: 'Redone',
   },
   devtool: 'source-map',
   plugins: [

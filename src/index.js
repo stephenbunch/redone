@@ -4,6 +4,6 @@ export KeyedDependency from './KeyedDependency';
 export SchemaParser from './SchemaParser';
 export connect from './connect';
 
-export * as schemas from './schemas';
-export * as types from './types';
-export * as utils from './utils';
+export * as Schemas from './schemas';
+export * as Types from './types';
+export * as Utils from './utils';
