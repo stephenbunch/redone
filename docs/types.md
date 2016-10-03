@@ -1,4 +1,4 @@
-# Redone Types
+# Redone Types API
 
 ## Table of Contents
 * [`any`](#any)

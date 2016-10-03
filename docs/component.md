@@ -1,4 +1,4 @@
-# Component API
+# Redone Component API
 
 ## Table of Contents
 * [`static propTypes`](#static-proptypes)
