@@ -122,7 +122,6 @@ export function createProxy(Component, schemaFactory) {
       if (isFunc(this._component.componentWillUnmount)) {
         this._component.componentWillUnmount();
       }
-      this.dispose();
     }
 
     setState(state, callback) {
@@ -146,6 +145,9 @@ export function createProxy(Component, schemaFactory) {
     }
 
     dispose() {
+      if (isFunc(this._component.dispose)) {
+        this._component.dispose();
+      }
       if (this._renderAutorun) {
         this._renderAutorun.dispose();
         this._renderAutorun = null;

@@ -58,6 +58,10 @@ export function createProxy(Component) {
     render() {
       return this._component.render();
     }
+
+    dispose() {
+      this._component.dispose();
+    }
   }
 
   return {

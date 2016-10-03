@@ -74,6 +74,7 @@ export default function connect(Class, schemaFactory = defaultSchemaFactory) {
 
     componentWillUnmount() {
       this.component.componentWillUnmount();
+      this.component.dispose();
     }
 
     setState(nextState, callback) {
