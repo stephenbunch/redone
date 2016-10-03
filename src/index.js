@@ -1,4 +1,5 @@
 export Autorun from './Autorun';
+export Datum from './Datum';
 export Dependency from './Dependency';
 export KeyedDependency from './KeyedDependency';
 export SchemaParser from './SchemaParser';
