@@ -12,6 +12,7 @@
   * [Async computations](#async-computations)
   * [Preventing circular data dependencies](#preventing-circular-data-dependencies)
 * [Types](#types)
+* [Reactive shapes](#reactive-shapes)
 * [`connect(class)`](#connectclass)
 * [`renderAsync(element)`](#renderasyncelement)
 
@@ -179,7 +180,7 @@ Circular dependencies between multiple autoruns:
 const dep1 = new Dependency();
 const dep2 = new Dependency();
 
-const auto1 Autorun.start(() => {
+const auto1 = Autorun.start(() => {
   dep1.depend();
   dep2.changed(); // throws an error on the 2nd time around
 });
@@ -210,6 +211,73 @@ console.log(number.cast());
 ```
 
 See the [Types API Reference](docs/types.md).
+
+## Reactive shapes
+**Reactive shapes** combine the power of **types** and [properties](https://en.wikipedia.org/wiki/Property_(programming)) to create indestructible objects that hook into the Autorun system. In Redone components, the `props`, `state`, and `context` are all reactive shapes.
+
+The following is a simplified example of how properties of reactive shapes are defined:
+```js
+import { Dependency } from 'redone';
+import { number } from 'redone/types';
+
+// This will be our reactive shape.
+const obj = {};
+
+// For now, let's just assume that our shape has a member called 'bar' which
+// is a number.
+const barDependency = new Dependency();
+const barSchema = number;
+
+// We'll setup another object to store our actual values.
+const values = {
+  bar: barSchema.cast()
+};
+
+// Now we define property accessors to proxy to our values.
+Object.defineProperty(obj, 'bar', {
+  get: () => {
+    // Subscribe the current autorun to this property.
+    barDependency.depend();
+    return values.bar;
+  },
+  set: value => {
+    // Cast the incoming value according to the schema for 'bar'.
+    value = barSchema.cast(value);
+
+    // If it's different than what we already have, update the values object
+    // and send a notification that this property has changed.
+    if (value !== values.bar) {
+      values.bar = value;
+      barDependency.changed();
+    }
+  }
+});
+```
+
+And this is how you would use them:
+```js
+import { Autorun, schemas } from 'redone';
+import { number } from 'redone/types';
+
+const schema = new schemas.ReactiveShapeSchema({
+  foo: new schemas.ReactiveShapeSchema({
+    bar: number,
+  }),
+});
+
+const state = schema.cast();
+
+Autorun.start(() => {
+  console.log(state.foo.bar);
+});
+// 0
+
+state.foo.bar = '5';
+// 5
+
+state.foo = null;
+// 0
+```
 
 ## `connect(class)`
 Generates a new React Component class using the specified class as a template. For the most part, the API matches React's [ES6 API](https://facebook.github.io/react/docs/reusable-components.html#es6-classes). The differences are:
@@ -271,7 +339,7 @@ import { renderAsync } from 'redone/server';
 import { number } from 'redone/types';
 
 const Test = connect(
-  class Test {
+  class {
     static stateTypes = {
       value: number,
     };
