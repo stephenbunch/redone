@@ -192,7 +192,7 @@ const auto2 = Autorun.start(() => {
 ```
 
 ## Types
-**Types** work a bit differently in Redone than in React. In React, types are used to assert that a property is of a certain type. In Redone, types are used to *ensure* that a given property is of the correct type. In other words, if you throw a string at a number type, the number schema will intelligently convert the string to a number rather than throwing an error.
+Types work a bit differently in Redone than in React. In React, types are used to assert that a property is of a certain type. In Redone, types are used to *ensure* that a given property is of the correct type. In other words, if you throw a string at a number type, the number schema will intelligently convert the string to a number rather than throwing an error.
 
 After using [Mongoose](http://mongoosejs.com/docs/guide.html) for MongoDB development in Node, I found that it's much easier to have a framework make sure your types are correct at runtime rather than littering type checks all over your codebase or using a compile-time type checker.
 
