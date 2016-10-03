@@ -336,7 +336,7 @@ export default connect(Counter);
 See the [Component API Reference](docs/component.md).
 
 ## `renderAsync(element)`
-With support for async computations, the default static render function provided by React won't work. Redone provides a utility method called `renderAsync` which walks the element tree multiple times until all async computations have completed.
+With support for async computations, the default static render function provided by React isn't enough. Redone provides a utility method called `renderAsync` which walks the element tree multiple times until all async computations have completed.
 
 ```js
 import { connect } from 'redone';
