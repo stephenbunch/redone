@@ -213,7 +213,7 @@ console.log(number.cast());
 See the [Types API Reference](docs/types.md).
 
 ## Reactive shapes
-**Reactive shapes** combine the power of **types** and [properties](https://en.wikipedia.org/wiki/Property_(programming)) to create indestructible objects that hook into the Autorun system. In Redone components, the `props`, `state`, and `context` are all reactive shapes.
+**Reactive shapes** combine the power of **types** and [properties](https://en.wikipedia.org/wiki/Property_(programming)) to create **indestructible** objects that hook into the Autorun system. In Redone components, the `props`, `state`, and `context` are all reactive shapes.
 
 The following is a simplified example of how properties of reactive shapes are defined:
 ```js
@@ -268,13 +268,18 @@ const schema = new schemas.ReactiveShapeSchema({
 const state = schema.cast();
 
 Autorun.start(() => {
+  // Log 'bar' anytime 'foo' or 'bar' changes.
   console.log(state.foo.bar);
 });
 // 0
 
+// 'bar' is indestructible. Setting 'bar' to the string '5' results in
+// casting the string to a number.
 state.foo.bar = '5';
 // 5
 
+// 'foo' is indestructible. Setting 'foo' to null results in casting null
+// to an empty object with 'bar' set to 0.
 state.foo = null;
 // 0
 ```
