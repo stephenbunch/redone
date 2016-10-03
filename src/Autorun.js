@@ -43,13 +43,15 @@ export default class Autorun {
     }
   }
 
-  static async onceAsync(func) {
-    try {
-      suspend();
-      return await func();
-    } finally {
+  static onceAsync(func) {
+    suspend();
+    return func().then(result => {
       resume();
-    }
+      return result;
+    }, err => {
+      resume();
+      throw err;
+    });
   }
 
   static exclude(func) {
