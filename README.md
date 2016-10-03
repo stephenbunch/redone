@@ -11,9 +11,9 @@
   * [Forked computations](#forked-computations)
   * [Async computations](#async-computations)
   * [Preventing circular data dependencies](#preventing-circular-data-dependencies)
-* [Types](#types) (See the [full API reference](docs/types.md))
+* [Types](#types) (see the [Redone Types API Reference](docs/types.md))
 * [Reactive shapes](#reactive-shapes)
-* [`connect(class)`](#connectclass) (See the [Component API reference](docs/component.md))
+* [`connect(class)`](#connectclass) (see the [Redone Component API Reference](docs/component.md))
 * [`renderAsync(element)`](#renderasyncelement)
 
 
