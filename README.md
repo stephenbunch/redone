@@ -4,6 +4,7 @@
 [![Build status][travis-image]][travis-url]
 [![Test coverage][codecov-image]][codecov-url]
 
+
 ## Table of Contents
 * [Introduction](#introduction)
 * [Autoruns](#autoruns)
@@ -15,6 +16,7 @@
 * [Reactive shapes](#reactive-shapes)
 * [`connect(class)`](#connectclass) (see the [Redone Component API](docs/component.md) reference)
 * [`renderAsync(element)`](#renderasyncelement)
+* [Interop with RxJS](#interop-with-rxjs)
 
 
 ## Introduction
@@ -365,6 +367,10 @@ const Test = connect(
 renderAsync(<Test />).then(result => console.log(result));
 // '<div>2</div>'
 ```
+
+## Interop with RxJS
+See [redone-observable](https://github.com/stephenbunch/redone-observable).
+
 
 [npm-image]: https://img.shields.io/npm/v/redone.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/redone
