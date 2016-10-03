@@ -18,7 +18,14 @@
 
 
 ## Introduction
-Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state mutations as is the case with Flux and Redux, Redone focuses on providing consistent relationships between components. It does this by decoupling data providers from consumers, disallowing circular data dependencies, and enforcing data schemas at runtime. Unlike most React frameworks, Redone takes an [object-oriented](https://news.ycombinator.com/item?id=1355977) approach to UX, favoring local state and mutable components over global state and immutable components.
+Redone builds on the [Tracker architecture](https://github.com/meteor/docs/blob/version-NEXT/long-form/tracker-manual.md) developed by Meteor and integrates it with React. Rather than focus on providing consistent state mutations as is the case with Flux and Redux, Redone focuses on providing consistent relationships between components.
+
+It does this by:
+* decoupling data providers from consumers
+* disallowing circular data dependencies
+* enforcing data schemas at runtime
+
+Unlike most React frameworks, Redone takes an [object-oriented](https://news.ycombinator.com/item?id=1355977) approach to UX, favoring local state and mutable components over global state and immutable components.
 
 See this [StackExchange answer](http://programmers.stackexchange.com/questions/151733/if-immutable-objects-are-good-why-do-people-keep-creating-mutable-objects/151735#151735) on why mutability makes more sense.
 
