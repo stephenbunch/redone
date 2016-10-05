@@ -17,6 +17,7 @@
 * [`connect(class)`](#connectclass) (see the [Redone Component API](docs/component.md) reference)
 * [`renderAsync(element)`](#renderasyncelement)
 * [Interop with RxJS](#interop-with-rxjs)
+* [Hot reload](#hot-reload)
 
 
 ## Introduction
@@ -370,6 +371,23 @@ renderAsync(<Test />).then(result => console.log(result));
 
 ## Interop with RxJS
 See [redone-observable](https://github.com/stephenbunch/redone-observable).
+
+
+## Hot reload
+Because Redone components are already proxied, no additional configuration or plugins are necessary to use hot module replacement (HMR). All that's needed is to pass the `module` variable to the `connect` function so that Redone can hook into the HMR runtime. See the [webpack docs](https://webpack.github.io/docs/webpack-dev-server.html#hot-module-replacement) to learn more about enabling HMR.
+
+```js
+import React from 'react';
+import { connect } from 'redone';
+
+class App {
+  render() {
+    return <div>hello</div>;
+  }
+}
+
+export default connect(App, module);
+```
 
 
 [npm-image]: https://img.shields.io/npm/v/redone.svg?style=flat-square
