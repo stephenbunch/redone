@@ -4,8 +4,8 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { number, func, string } from './types';
-import connect from './connect';
+import { number, func, string } from '../types';
+import connect from '../connect';
 
 it('the props should be read-only', () => {
   const ctor = jest.fn(function ctor() {
@@ -56,10 +56,6 @@ it('should pass props and context into the constructor', () => {
   const wrapper = mount(<Foo />);
   expect(ctor).toBeCalled();
   wrapper.unmount();
-});
-
-it('should return a new class with the same name', () => {
-  expect(connect(class Foo {}).name).toBe('Foo');
 });
 
 it('should render the component inside an autorun', () => {
@@ -344,15 +340,6 @@ it('the context should be read-only', () => {
   wrapper.unmount();
 });
 
-it('should validate the component type', () => {
-  expect(() => {
-    connect(class Foo extends React.Component {});
-  }).toThrow();
-  expect(() => {
-    connect('foo');
-  }).toThrow();
-});
-
 it('defaultProps should work', () => {
   let called = false;
   const Foo = connect(class {
@@ -455,6 +442,15 @@ it('setting the state should throw an error if no state types are specified', ()
   expect(() => {
     mount(<Foo />);
   }).toThrow();
+});
+
+it('setting the state to null should not throw throw an error', () => {
+  const Foo = connect(class {
+    constructor() {
+      this.state = null;
+    }
+  });
+  mount(<Foo />).unmount();
 });
 
 it('should support the callback parameter of setState', () => {

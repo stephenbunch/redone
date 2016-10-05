@@ -64,11 +64,8 @@ function createClass(proxy, name, statics, moduleId) {
     componentWillUnmount() {
       this.component.componentWillUnmount();
       this.component.dispose();
-      if (this.constructor.instances) {
-        this.constructor.instances.splice(
-          this.constructor.instances.indexOf(this),
-          1
-        );
+      if (hot[moduleId]) {
+        hot[moduleId].instances.splice(hot[moduleId].instances.indexOf(this), 1);
       }
     }
 
