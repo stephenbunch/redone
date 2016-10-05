@@ -374,7 +374,11 @@ See [redone-observable](https://github.com/stephenbunch/redone-observable).
 
 
 ## Hot reload
-Because Redone components are already proxied, no additional configuration or plugins are necessary to use hot module replacement (HMR). All that's needed is to pass the `module` variable to the `connect` function so that Redone can hook into the HMR runtime. When a component module changes, Redone loads the new class, disposes the current instance, initializes an instance of the new class, and re-renders the component in place so only that component is re-rendered. See the [webpack docs](https://webpack.github.io/docs/webpack-dev-server.html#hot-module-replacement) to learn more about enabling HMR.
+Because Redone components are already proxied, no additional configuration or plugins are necessary to use hot module replacement (HMR). All that's needed is to pass the `module` variable to the `connect` function so that Redone can hook into the HMR runtime.
+
+When a component module changes, Redone loads the new class, disposes the current instance, initializes an instance of the new class, and re-renders the component in place so only that component is re-rendered.
+
+See the [webpack docs](https://webpack.github.io/docs/webpack-dev-server.html#hot-module-replacement) to learn more about enabling HMR.
 
 ```js
 import React from 'react';
