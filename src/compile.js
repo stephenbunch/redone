@@ -73,7 +73,7 @@ function createClass(proxy, name, statics, moduleId) {
       this.component.setState(nextState, callback);
     }
 
-    update(Component) {
+    reload(Component) {
       this.component.componentWillUnmount();
       this.component.dispose();
       this.component = new Component(this.props, this.context, this);
@@ -120,7 +120,7 @@ export default function compile(Class, schemaFactory, module) {
         contextTypes: proxy.contextTypes,
         childContextTypes: proxy.childContextTypes,
       }, statics);
-      hot[module.id].instances.forEach(x => x.update(proxy.Component));
+      hot[module.id].instances.forEach(x => x.reload(proxy.Component));
     }
     return hot[module.id].Class;
   }
