@@ -127,5 +127,5 @@ export default function compile(Class, schemaFactory, module) {
     }
     return hot[module.id].Class;
   }
-  return createClass(proxy);
+  return createClass(proxy, Class.name, statics);
 }
