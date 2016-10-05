@@ -73,16 +73,16 @@ function createClass(proxy, name, statics, moduleId) {
       this.component.setState(nextState, callback);
     }
 
-    render() {
-      return this.component.render();
-    }
-
     update(Component) {
       this.component.componentWillUnmount();
       this.component.dispose();
       this.component = new Component(this.props, this.context, this);
       this.component.compute();
       this.forceUpdate();
+    }
+
+    render() {
+      return this.component.render();
     }
   }
 

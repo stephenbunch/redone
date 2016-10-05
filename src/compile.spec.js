@@ -4,7 +4,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import { number, func, string } from './types';
 import connect from './connect';
 
 it('should return a new class with the same name', () => {
