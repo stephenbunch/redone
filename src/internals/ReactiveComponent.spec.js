@@ -493,3 +493,14 @@ it('should fire the dispose method when unmounting', () => {
   wrapper.unmount();
   expect(called).toBe(true);
 });
+
+it('should default render result to null if undefined', () => {
+  const Foo = connect(class {
+    render() {
+      return undefined;
+    }
+  });
+  // should not throw an error because null should be
+  // returned instead by the proxy
+  mount(<Foo />).unmount();
+});

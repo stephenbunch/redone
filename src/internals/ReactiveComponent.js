@@ -132,11 +132,17 @@ export function createProxy(Component, schemaFactory) {
       if (isFunc(this._component.render)) {
         if (this._renderAutorun === null) {
           this._renderAutorun = Autorun.start(comp => {
-            this._element = this._component.render();
-            if (!comp.isFirstRun) {
-              Autorun.exclude(() => {
-                this._delegate.forceUpdate();
-              });
+            let element = this._component.render();
+            if (element === undefined) {
+              element = null;
+            }
+            if (element !== this._element) {
+              this._element = element;
+              if (!comp.isFirstRun) {
+                Autorun.exclude(() => {
+                  this._delegate.forceUpdate();
+                });
+              }
             }
           });
         }
