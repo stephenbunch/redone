@@ -20,3 +20,17 @@ it('should replace nested shapes', () => {
   expect(react.keys.foo.item instanceof ReactiveShapeSchema).toBe(true);
   expect(react.keys.foo.item.keys.bar instanceof NumberSchema).toBe(true);
 });
+
+it('is should support caching', () => {
+  const foo = new ShapeSchema({
+    foo: new NumberSchema(),
+  });
+  const bar = new ShapeSchema({
+    bar: new NumberSchema(),
+  });
+  const cache = new Map();
+  const rxFoo = transformReplaceShape(foo, ReactiveShapeSchema, cache);
+  const rxBar = transformReplaceShape(bar, ReactiveShapeSchema, cache);
+  expect(transformReplaceShape(foo, ReactiveShapeSchema, cache)).toBe(rxFoo);
+  expect(transformReplaceShape(bar, ReactiveShapeSchema, cache)).toBe(rxBar);
+});
