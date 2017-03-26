@@ -2,7 +2,7 @@
 
 import MultiPassRenderContext from './internals/MultiPassRenderContext';
 
-export default function renderAsync(renderFunc, element) {
+export default function renderAsync(renderer, element) {
   return new Promise((resolve, reject) => {
     let rendering = false;
     const render = () => {
@@ -11,7 +11,7 @@ export default function renderAsync(renderFunc, element) {
         context.reset();
         let result;
         try {
-          result = context.render(() => renderFunc(element));
+          result = context.render(() => renderer(element));
         } catch (err) {
           reject(err);
           return;

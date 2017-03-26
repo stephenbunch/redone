@@ -15,7 +15,7 @@
 * [Types](#types) (see the [Redone Types API](docs/types.md) reference)
 * [Reactive shapes](#reactive-shapes)
 * [`compile(Component)(Class)`](#compilecomponentclass) (see the [Redone Component API](docs/component.md) reference)
-* [`renderAsync(element)`](#renderasyncelement)
+* [`renderAsync(renderer, element)`](#renderasyncrendererelement)
 * [Interop with RxJS](#interop-with-rxjs)
 * [Hot reload](#hot-reload)
 
@@ -339,7 +339,7 @@ class Counter {
 export default compile(React.Component)(Counter);
 ```
 
-## `renderAsync(element)`
+## `renderAsync(renderer, element)`
 With support for async computations, the default static render function provided by React isn't enough. Redone provides a utility method called `renderAsync` which walks the element tree multiple times until all async computations have completed.
 
 ```js
