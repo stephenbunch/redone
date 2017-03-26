@@ -1,13 +1,17 @@
 /* global it expect */
 
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 import { number, any } from './types';
-import renderAsync from './renderAsync';
-import connect from './connect';
+import _renderAsync from './renderAsync';
+import _compile from './compile';
 import Dependency from './Dependency';
 
+const renderAsync = _renderAsync.bind(undefined, ReactDOMServer.renderToStaticMarkup);
+const compile = _compile(React.Component);
+
 it('should render components with async computes', async () => {
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: number,
     };
@@ -21,7 +25,7 @@ it('should render components with async computes', async () => {
     }
   });
 
-  const Bar = connect(class {
+  const Bar = compile(class {
     static stateTypes = {
       value: number,
     };
@@ -47,7 +51,7 @@ it('should render components with async computes', async () => {
 it('should recover from errors in compute', async () => {
   const dep = new Dependency();
   const error = new Error('test');
-  const Foo = connect(class {
+  const Foo = compile(class {
     compute() {
       dep.depend();
       throw error;
@@ -67,7 +71,7 @@ it('should recover from errors in compute', async () => {
 it('should recover from async errors in compute', async () => {
   const dep = new Dependency();
   const error = new Error('test');
-  const Foo = connect(class {
+  const Foo = compile(class {
     async compute(comp) {
       await Promise.resolve();
       comp.continue(() => {
@@ -90,7 +94,7 @@ it('should recover from async errors in compute', async () => {
 it('should recover from errors in render', async () => {
   const dep = new Dependency();
   const error = new Error('test');
-  const Foo = connect(class {
+  const Foo = compile(class {
     render() {
       dep.depend();
       throw error;
@@ -107,41 +111,9 @@ it('should recover from errors in render', async () => {
   expect(dep.computations[0].isAlive).toBe(false);
 });
 
-it('should recover from errors in getChildContext', async () => {
-  const dep1 = new Dependency();
-  const dep2 = new Dependency();
-  const dep3 = new Dependency();
-  const error = new Error('test');
-  const Foo = connect(class {
-    compute() {
-      dep1.depend();
-    }
-    render() {
-      dep2.depend();
-    }
-    getChildContext() {
-      dep3.depend();
-      throw error;
-    }
-  });
-  let errorResult;
-  try {
-    await renderAsync(<Foo />);
-  } catch (err) {
-    errorResult = err;
-  }
-  expect(errorResult).toBe(error);
-  expect(dep1.computations.length).toBe(1);
-  expect(dep1.computations[0].isAlive).toBe(false);
-  expect(dep2.computations.length).toBe(1);
-  expect(dep2.computations[0].isAlive).toBe(false);
-  expect(dep3.computations.length).toBe(1);
-  expect(dep3.computations[0].isAlive).toBe(false);
-});
-
 it('should recover from errors in componentWillMount', async () => {
   const error = new Error('test');
-  const Foo = connect(class {
+  const Foo = compile(class {
     componentWillMount() {
       throw error;
     }
@@ -158,14 +130,14 @@ it('should recover from errors in componentWillMount', async () => {
 it('should recover from errors in sibling components', async () => {
   const dep = new Dependency();
   const error = new Error('test');
-  const Foo = connect(class {
+  const Foo = compile(class {
     async compute() {
       dep.depend();
       await Promise.resolve();
       throw error;
     }
   });
-  const Bar = connect(class {
+  const Bar = compile(class {
     async compute() {
       dep.depend();
       await Promise.resolve();
@@ -191,7 +163,7 @@ it('should recover from errors in sibling components', async () => {
 it('should only call methods once', async () => {
   let render = 0;
   let compute = 0;
-  const Foo = connect(class {
+  const Foo = compile(class {
     static propTypes = {
       children: any,
     };

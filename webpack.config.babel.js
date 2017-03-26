@@ -23,7 +23,4 @@ module.exports = {
       { test: /\.jsx?$/, loader: 'babel', include: `${__dirname}/src` },
     ],
   },
-  externals: {
-    'react': 'React',
-  },
 };

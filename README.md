@@ -14,7 +14,7 @@
   * [Preventing circular data dependencies](#preventing-circular-data-dependencies)
 * [Types](#types) (see the [Redone Types API](docs/types.md) reference)
 * [Reactive shapes](#reactive-shapes)
-* [`connect(class)`](#connectclass) (see the [Redone Component API](docs/component.md) reference)
+* [`compile(Component)(Class)`](#compilecomponentclass) (see the [Redone Component API](docs/component.md) reference)
 * [`renderAsync(element)`](#renderasyncelement)
 * [Interop with RxJS](#interop-with-rxjs)
 * [Hot reload](#hot-reload)
@@ -208,8 +208,6 @@ After using [Mongoose](http://mongoosejs.com/docs/guide.html) for MongoDB develo
 
 With Redone types, we can be confident that data entering through our props and coming from our state follow the type signatures we specified. This eliminates an entire class of bugs related to type errors. If some outside data has the wrong shape, we'll just see an empty component rather than crashing the page.
 
-You can convert from Redone types to React types using `utils/getReactTypes`, but you cannot convert the other way around due to the way React types are represented.
-
 ```js
 import { number } from 'redone/types';
 
@@ -221,7 +219,7 @@ console.log(number.cast());
 ```
 
 ## Reactive shapes
-**Reactive shapes** combine the power of Redone types and [properties](https://en.wikipedia.org/wiki/Property_(programming)) to create **indestructible** objects that hook into the Autorun system. In Redone components, the `props`, `state`, and `context` are all reactive shapes.
+**Reactive shapes** combine the power of Redone types and [properties](https://en.wikipedia.org/wiki/Property_(programming)) to create **indestructible** objects that hook into the Autorun system. In Redone components, the `props` and `state` are reactive shapes.
 
 The following is a simplified example of how properties of reactive shapes are defined:
 ```js
@@ -292,21 +290,21 @@ state.foo = null;
 // 0
 ```
 
-## `connect(class)`
+## `compile(Component)(Class)`
 Generates a new React Component class using the specified class as a template. For the most part, the API matches React's [ES6 API](https://facebook.github.io/react/docs/reusable-components.html#es6-classes). The differences are:
 
 * The class should not inherit from `React.Component`.
 * `stateTypes` must be set in order to use the `state` object.
-* `this.props`, `this.state`, and `this.context` are all instances of `ReactiveShape` or `null` if no "types" are set.
+* `this.props` and `this.state` are instances of `ReactiveShape` or `null` if no "types" are set.
 * `this.setState` can be used to update a group of properties at once, but normal assignment works as well and is preferred when updating single values.
 * `componentWillReceiveProps`, `shouldComponentUpdate`, `componentWillUpdate`, and `this.forceUpdate` are not supported since they go against the autorun paradigm.
 * `mixins` are not supported. Object composition is a much better strategy than multiple inheritance.
-* `compute`, `render`, and `getChildContext` are all run inside separate autoruns.
+* `compute` and `render`run inside separate autoruns.
 * The `compute` hook is the only function that can be async and has access to the computation object.
 
 ```js
 import React from 'react';
-import { connect } from 'redone';
+import { compile } from 'redone';
 import { number } from 'redone/types';
 
 class Counter {
@@ -319,8 +317,8 @@ class Counter {
     square: number,
   };
 
-  constructor(props) {
-    this.state.value = props.initialValue;
+  initialize() {
+    this.state.value = this.props.initialValue;
   }
 
   compute() {
@@ -338,19 +336,20 @@ class Counter {
   }
 }
 
-export default connect(Counter);
+export default compile(React.Component)(Counter);
 ```
 
 ## `renderAsync(element)`
 With support for async computations, the default static render function provided by React isn't enough. Redone provides a utility method called `renderAsync` which walks the element tree multiple times until all async computations have completed.
 
 ```js
-import { connect } from 'redone';
-import { renderAsync } from 'redone/server';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import { compile, renderAsync } from 'redone';
 import { number } from 'redone/types';
 
-const Test = connect(
-  class {
+const Test = compile(React.Component)(
+  class Test {
     static stateTypes = {
       value: number,
     };
@@ -365,7 +364,7 @@ const Test = connect(
   }
 );
 
-renderAsync(<Test />).then(result => console.log(result));
+renderAsync(ReactDOMServer.renderToStaticMarkup, <Test />).then(result => console.log(result));
 // '<div>2</div>'
 ```
 
@@ -374,15 +373,15 @@ See [redone-observable](https://github.com/stephenbunch/redone-observable).
 
 
 ## Hot reload
-Because Redone components are already proxied, no additional configuration or plugins are necessary to use hot module replacement (HMR). All that's needed is to pass the `module` variable to the `connect` function so that Redone can hook into the HMR runtime.
+Because Redone components are already proxied, no additional configuration or plugins are necessary to use hot module replacement (HMR). All that's needed is to pass the `module` variable to the `compile` function so that Redone can hook into the HMR runtime.
 
-When a component module changes, Redone loads the new class, disposes the current instance, initializes an instance of the new class, and re-renders the component in place so only that component is re-rendered.
+When a component module changes, Redone loads the new class, disposes the current instance, initializes an instance of the new class, and re-renders the component in place.
 
 See the [webpack docs](https://webpack.github.io/docs/webpack-dev-server.html#hot-module-replacement) to learn more about enabling HMR.
 
 ```js
 import React from 'react';
-import { connect } from 'redone';
+import { compile } from 'redone';
 
 class App {
   render() {
@@ -390,7 +389,7 @@ class App {
   }
 }
 
-export default connect(App, module);
+export default compile(React.Component, module)(App);
 ```
 
 

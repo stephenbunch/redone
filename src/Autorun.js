@@ -23,7 +23,7 @@ function resume() {
   }
 }
 
-export default class Autorun {
+class Autorun {
   static get current() {
     return currentAutorun;
   }
@@ -131,3 +131,5 @@ export default class Autorun {
     }
   }
 }
+
+export default Autorun;

@@ -5,61 +5,47 @@ import React from 'react';
 import { mount } from 'enzyme';
 
 import { number, func, string } from '../types';
-import connect from '../connect';
+import _compile from '../compile';
+
+const compile = _compile(React.Component);
 
 it('the props should be read-only', () => {
-  const ctor = jest.fn(function ctor() {
+  const initialize = jest.fn(function initialize() {
     expect(this.props.foo).toBe(2);
     expect(() => {
       this.props.foo = '3';
     }).toThrow();
   });
-  const Foo = connect(class {
+  const Foo = compile(class {
     static propTypes = {
       foo: number,
     };
-    constructor() {
-      ctor.call(this);
+    initialize() {
+      initialize.call(this);
     }
   });
   const wrapper = mount(<Foo foo={2} />);
-  expect(ctor).toBeCalled();
+  expect(initialize).toBeCalled();
   wrapper.unmount();
 });
 
 it('should default to null if no types are defined', () => {
-  const ctor = jest.fn(function ctor() {
+  const initialize = jest.fn(function initialize() {
     expect(this.state).toBe(null);
-    expect(this.context).toBe(null);
     expect(this.props).toBe(null);
   });
-  const Foo = connect(class {
-    constructor() {
-      ctor.call(this);
+  const Foo = compile(class {
+    initialize() {
+      initialize.call(this);
     }
   });
   const wrapper = mount(<Foo />);
-  expect(ctor).toBeCalled();
-  wrapper.unmount();
-});
-
-it('should pass props and context into the constructor', () => {
-  const ctor = jest.fn(function ctor(props, context) {
-    expect(props).toBe(this.props);
-    expect(context).toBe(this.context);
-  });
-  const Foo = connect(class {
-    constructor(...args) {
-      ctor.call(this, ...args);
-    }
-  });
-  const wrapper = mount(<Foo />);
-  expect(ctor).toBeCalled();
+  expect(initialize).toBeCalled();
   wrapper.unmount();
 });
 
 it('should render the component inside an autorun', () => {
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: number,
     };
@@ -96,7 +82,7 @@ it('should render the component inside an autorun', () => {
 describe('setState', () => {
   it('should set all properties in one transaction', () => {
     let called = 0;
-    const Foo = connect(class {
+    const Foo = compile(class {
       static stateTypes = {
         a: number,
         b: number,
@@ -135,7 +121,7 @@ it('should update the props', () => {
   let bar = 0;
   let baz = 0;
 
-  const Foo = connect(class {
+  const Foo = compile(class {
     static propTypes = {
       render: func,
     };
@@ -146,7 +132,7 @@ it('should update the props', () => {
     }
   });
 
-  const Bar = connect(class {
+  const Bar = compile(class {
     static propTypes = {
       value: number,
     };
@@ -159,7 +145,7 @@ it('should update the props', () => {
     }
   });
 
-  const Baz = connect(class {
+  const Baz = compile(class {
     static stateTypes = {
       value: number,
     };
@@ -198,7 +184,7 @@ it('should fire lifecycle hooks', () => {
   const didUpdate = jest.fn();
   const willUnmount = jest.fn();
 
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: number,
     };
@@ -252,118 +238,8 @@ it('should fire lifecycle hooks', () => {
   expect(willUnmount.mock.calls.length).toBe(1);
 });
 
-it('should pass context variables', () => {
-  const Foo = connect(class {
-    static contextTypes = {
-      foo: number,
-      bar: number,
-    };
-
-    render() {
-      return (
-        <div className="value">{this.context.foo}|{this.context.bar}</div>
-      );
-    }
-  });
-
-  const Bar = connect(class {
-    static contextTypes = {
-      foo: number,
-    };
-
-    static stateTypes = {
-      value: number,
-    };
-
-    static childContextTypes = {
-      bar: number,
-    };
-
-    compute() {
-      this.state.value = this.context.foo;
-    }
-
-    getChildContext() {
-      return {
-        bar: Math.pow(this.state.value, 2),
-      };
-    }
-
-    render() {
-      return (
-        <div>
-          <Foo />
-          <button
-            onClick={() => {
-              this.state.value += 1;
-            }}
-          />
-        </div>
-      );
-    }
-  });
-
-  const wrapper = mount(<Bar />, {
-    context: {
-      foo: 2,
-    },
-  });
-  expect(wrapper.find('.value').text()).toBe('2|4');
-
-  wrapper.find('button').simulate('click');
-  expect(wrapper.find('.value').text()).toBe('2|9');
-
-  wrapper.unmount();
-});
-
-it('the context should be read-only', () => {
-  let called = false;
-  const Foo = connect(class {
-    static contextTypes = {
-      foo: number,
-    };
-
-    constructor(props, context) {
-      expect(context.foo).toBe(2);
-      expect(() => {
-        context.foo = 3;
-      });
-      called = true;
-    }
-  });
-  const wrapper = mount(<Foo />, {
-    context: {
-      foo: 2,
-    },
-  });
-  expect(called).toBe(true);
-  wrapper.unmount();
-});
-
-it('defaultProps should work', () => {
-  let called = false;
-  const Foo = connect(class {
-    static defaultProps = {
-      foo: 2,
-    };
-
-    static propTypes = {
-      foo: number,
-    };
-
-    constructor(props) {
-      expect(props.foo).toBe(2);
-      called = true;
-    }
-  });
-
-  const wrapper = mount(<Foo />);
-  expect(called).toBe(true);
-  wrapper.unmount();
-});
-
 it('should forward setState calls for easier testing', () => {
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: number,
     };
@@ -387,12 +263,12 @@ it('should forward setState calls for easier testing', () => {
 });
 
 it('should expose the state object for easier testing', () => {
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: number,
     };
 
-    constructor() {
+    initialize() {
       this.state.value = 2;
     }
 
@@ -410,32 +286,32 @@ it('should expose the state object for easier testing', () => {
 });
 
 it('the state should be settable', () => {
-  const ctor = jest.fn();
+  const initialize = jest.fn();
 
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: number,
     };
 
-    constructor() {
+    initialize() {
       expect(this.state.value).toBe(0);
       this.state = { value: '2' };
       expect(this.state.value).toBe(2);
       this.state = undefined;
       expect(this.state.value).toBe(0);
-      ctor();
+      initialize();
     }
   });
 
   const wrapper = mount(<Foo />);
-  expect(ctor).toBeCalled();
+  expect(initialize).toBeCalled();
 
   wrapper.unmount();
 });
 
 it('setting the state should throw an error if no state types are specified', () => {
-  const Foo = connect(class {
-    constructor() {
+  const Foo = compile(class {
+    initialize() {
       this.state = { foo: 2 };
     }
   });
@@ -445,8 +321,8 @@ it('setting the state should throw an error if no state types are specified', ()
 });
 
 it('setting the state to null should not throw throw an error', () => {
-  const Foo = connect(class {
-    constructor() {
+  const Foo = compile(class {
+    initialize() {
       this.state = null;
     }
   });
@@ -455,7 +331,7 @@ it('setting the state to null should not throw throw an error', () => {
 
 it('should support the callback parameter of setState', () => {
   let result = '';
-  const Foo = connect(class {
+  const Foo = compile(class {
     static stateTypes = {
       value: string,
     };
@@ -483,7 +359,7 @@ it('should support the callback parameter of setState', () => {
 
 it('should fire the dispose method when unmounting', () => {
   let called = false;
-  const Foo = connect(class {
+  const Foo = compile(class {
     dispose() {
       called = true;
     }
@@ -495,7 +371,7 @@ it('should fire the dispose method when unmounting', () => {
 });
 
 it('should default render result to null if undefined', () => {
-  const Foo = connect(class {
+  const Foo = compile(class {
     render() {
       return undefined;
     }

@@ -4,18 +4,17 @@
 import React from 'react';
 import { mount } from 'enzyme';
 
-import connect from './connect';
+import _compile from './compile';
+
+const compile = _compile(React.Component);
 
 it('should return a new class with the same name', () => {
-  expect(connect(class Foo {}).name).toBe('Foo');
+  expect(compile(class Foo {}).name).toBe('Foo');
 });
 
 it('should validate the component type', () => {
   expect(() => {
-    connect(class Foo extends React.Component {});
-  }).toThrow();
-  expect(() => {
-    connect('foo');
+    compile('foo');
   }).toThrow();
 });
 
@@ -27,7 +26,7 @@ it('should support webpack HMR', () => {
       accept: jest.fn(),
     },
   };
-  const Foo = connect(class {
+  const Foo = _compile(React.Component, module)(class {
     dispose() {
       dispose();
     }
@@ -35,21 +34,29 @@ it('should support webpack HMR', () => {
   Foo.prototype.forceUpdate = jest.fn();
   expect(module.hot.accept).toBeCalled();
   const wrapper = mount(<Foo />);
-  const ctor = jest.fn();
+  const initialize = jest.fn();
   const compute = jest.fn();
-  const Foo2 = connect(class {
-    constructor() {
-      ctor();
+  const Foo2 = _compile(React.Component, module)(class {
+    initialize() {
+      initialize();
     }
-
     compute() {
       compute();
     }
-  }, module);
+  });
   expect(Foo).toBe(Foo2);
   expect(dispose).toBeCalled();
-  expect(ctor).toBeCalled();
+  expect(initialize).toBeCalled();
   expect(compute).toBeCalled();
   expect(Foo.prototype.forceUpdate).toBeCalled();
   wrapper.unmount();
+});
+
+describe('get ReactComponent.state()', () => {
+  it('should return null when the underlying component is disposed', () => {
+    const Foo = compile(class Foo {});
+    const foo = new Foo();
+    foo.component.dispose();
+    expect(foo.state).toBe(null);
+  });
 });

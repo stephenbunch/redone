@@ -9,7 +9,6 @@ export default class LambdaComponent {
   constructor(context, componentFactory) {
     this._context = context;
     this._computeResult = undefined;
-    this._childContext = undefined;
     this._renderResult = undefined;
     this._computeFinished = false;
     this._component = componentFactory();
@@ -55,24 +54,6 @@ export default class LambdaComponent {
       this._computeResult = nullIfUndefined(result);
     }
     return this._computeResult;
-  }
-
-  getChildContext() {
-    if (this._computeFinished) {
-      if (this._childContext === undefined) {
-        let result;
-        try {
-          result = this._component.getChildContext();
-        } catch (err) {
-          this.dispose();
-          throw err;
-        }
-        this._childContext = nullIfUndefined(result);
-        this.dispose();
-      }
-      return this._childContext;
-    }
-    return null;
   }
 
   render() {
