@@ -8,7 +8,7 @@
 * [`func`](#func)
 * [`funcOf(type)`](#funcoftype)
 * [`instanceOf(type)`](#instanceoftype)
-* [`mapOf(key, value)`](#mapofkeyvalue)
+* [`mapOf(key, value)`](#mapofkey-value)
 * [`nullableOf(type)`](#nullableoftype)
 * [`number`](#number)
 * [`object`](#object)
