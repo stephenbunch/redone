@@ -8,6 +8,7 @@
 * [`func`](#func)
 * [`funcOf(type)`](#funcoftype)
 * [`instanceOf(type)`](#instanceoftype)
+* [`mapOf(key, value)`](#mapofkeyvalue)
 * [`nullableOf(type)`](#nullableoftype)
 * [`number`](#number)
 * [`object`](#object)
@@ -62,7 +63,7 @@ func.cast('foo'); // () => {}
 ```
 
 ### `funcOf(type)`
-Generates a schema that ensures that a value is a function that returns a specific type.
+Generates a schema that ensures that a value is a function that returns a given type.
 ```js
 import { funcOf, number } from 'redone/types';
 
@@ -82,6 +83,17 @@ foo.cast('foo'); // throws error
 
 const instance = new Foo();
 foo.cast(instance); // instance
+```
+
+### `mapOf(key, value)`
+Generates a schema that ensures that a value is a Reactive Map of a given key and value type.
+```js
+import { mapOf, string, number } from 'redone/types';
+
+const schema = mapOf(string, number);
+const map = schema.cast({ 'foo': '42' });
+map.set(2, 2);
+Array.from(map.entries()); // [['foo', 42], ['2', 2]]
 ```
 
 ### `nullableOf(type)`

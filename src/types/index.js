@@ -5,6 +5,7 @@ export date from './date';
 export func from './func';
 export funcOf from './funcOf';
 export instanceOf from './instanceOf';
+export mapOf from './mapOf';
 export nullableOf from './nullableOf';
 export number from './number';
 export object from './object';
